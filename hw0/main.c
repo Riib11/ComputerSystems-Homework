@@ -16,6 +16,8 @@
 #include <time.h>
 #include <math.h>
 
+#define DATATYPE int8_t
+
 void print_array(float size, float* xs) {
     printf("[ ");
     for(int i=0; i<size; i++) {
@@ -24,24 +26,24 @@ void print_array(float size, float* xs) {
     printf("]\n");
 }
 
-float uniform(float bound) {
+DATATYPE uniform(float bound) {
     // generates random in [0,1] range
     float scale = rand() / (float) RAND_MAX;
     // translates random to [-bound, bound] range
-    return (-bound) + scale * ( bound - (-bound) );
+    return (DATATYPE) ((-bound) + scale * ( bound - (-bound) ));
 }
 
-float * generate_random_list(unsigned sz, float bound) {
-	// float list[sz];
-	float *list = malloc(sizeof(list) * sz);
-	if (!list) { } // bad
-	for (unsigned i=0; i < sz; i++) {
-		list[i] = uniform(bound);
-	}
-	return list;
+DATATYPE* generate_random_list(unsigned sz) {
+    float bound = 100;
+    int16_t *list = malloc(sizeof(list) * sz);
+    if (!list) { } // bad
+    for (unsigned i=0; i < sz; i++) {
+	list[i] = uniform(bound);
+    }
+    return list;
 }
 
-void update_coords(double size, float* x, float* y, float* z, float* vx, float* vy, float* vz) {
+void update_coords(double size, DATATYPE* x, DATATYPE* y, DATATYPE* z, DATATYPE* vx, DATATYPE* vy, DATATYPE* vz) {
     for (int i=0; i<size; i++) {
         x[i] = x[i] + vx[i];
         y[i] = y[i] + vy[i];
@@ -62,16 +64,16 @@ double pow(double x, double y);
 
 int get_iters(double si) {
     if (si < 10) {
-        return 100;
+        return 200;
     } else if(si < 16) {
-        return 10;
+        return 50;
     } else {
         return 3;
     }
 }
 
 int ITERS = 1;
-int SIZE_P2_MAX = 24;
+int SIZE_P2_MAX = 16;
 
 int main(void) {
 
@@ -84,12 +86,12 @@ int main(void) {
         int iters = get_iters(si);
         for (int i=0; i < iters; i++) {
             // initialized states
-            float* x = generate_random_list(size, 1.0);
-            float* y = generate_random_list(size, 1.0);
-            float* z = generate_random_list(size, 1.0);
-            float* vx = generate_random_list(size, 1.0);
-            float* vy = generate_random_list(size, 1.0);
-            float* vz = generate_random_list(size, 1.0);
+            DATATYPE* x = generate_random_list(size);
+            DATATYPE* y = generate_random_list(size);
+            DATATYPE* z = generate_random_list(size);
+            DATATYPE* vx = generate_random_list(size);
+            DATATYPE* vy = generate_random_list(size);
+            DATATYPE* vz = generate_random_list(size);
             clock_t start, end;
             double cpu_time_used;
             start = clock();

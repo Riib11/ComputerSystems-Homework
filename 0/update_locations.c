@@ -18,13 +18,23 @@ float uniform(float bound) {
     return (-bound) + scale * ( bound - (-bound) );
 }
 
-float* generate_random_list(int size, float bound) {
-    float values[size];
-    for (int i=0; i < size; i++) {
-        values[i] = uniform(bound);
-    }
-    print_array(size, values);
-    return values;
+// float* generate_random_list(int size, float bound) {
+//    float values[size];
+//    for (int i=0; i < size; i++) {
+//        values[i] = uniform(bound);
+//    }
+//    print_array(size, values);
+//    return values;
+//}
+
+float * generate_random_list(unsigned sz, float bound) {
+	// float list[sz];
+	float *list = malloc(sizeof(list) * sz);
+	if (!list) { } // bad
+	for (unsigned i=0; i < sz; i++) {
+		list[i] = uniform(bound);
+	}
+	return list;
 }
 
 void update_coords(int size, float* x, float* y, float* z, float* vx, float* vy, float* vz) {
@@ -36,14 +46,12 @@ void update_coords(int size, float* x, float* y, float* z, float* vx, float* vy,
 }
 
 float sum(int size, float* xs) {
-    // float total = 0;
-    // for (int i=0; i < size; i++) {
-    //     total = total + xs[i];
-    // }
-    // printf("total = %f\n", total);
-    // return total;
-    print_array(size, xs);
-    return 0.0
+    float total = 0;
+    for (int i=0; i < size; i++) {
+	total = total + xs[i];
+    }
+    printf("total = %f\n", total);
+    return total;
 }
 
 int main(void) {
@@ -51,7 +59,7 @@ int main(void) {
     srand((unsigned int)time(NULL));
 
     // initialized states
-    int size = 10;
+    int size = 100;
     float* x = generate_random_list(size, 1.0);
     float* y = generate_random_list(size, 1.0);
     float* z = generate_random_list(size, 1.0);
@@ -64,13 +72,15 @@ int main(void) {
     // printf("z sum = %f\n", sum(size, z));
 
     // time it
-    // clock_t start, end;
-    // double cpu_time_used;
-    // start = clock();
-    // update_coords(size, x, y, z, vx, vy, vz);
-    // end = clock();
-    // cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    // printf("time used = %f\n", cpu_time_used);
+    unsigned iters = 100;
+    for (unsigned iter
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
+    update_coords(size, x, y, z, vx, vy, vz);
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("time used = %f\n", cpu_time_used);
 
     // make sure worked right
     float chksum = sum(size, x) + sum(size, y) + sum(size, z);

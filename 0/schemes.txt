@@ -1,0 +1,21 @@
+total 80
+-rw-r--r-- 1 root root 3274 May 24 15:52 README.txt
+-rw-r--r-- 1 root root 2476 May 24 15:52 blue.vim
+-rw-r--r-- 1 root root 2990 May 24 15:52 darkblue.vim
+-rw-r--r-- 1 root root  548 May 24 15:52 default.vim
+-rw-r--r-- 1 root root 2522 May 24 15:52 delek.vim
+-rw-r--r-- 1 root root 2812 May 24 15:52 desert.vim
+-rw-r--r-- 1 root root 1666 May 24 15:52 elflord.vim
+-rw-r--r-- 1 root root 2452 May 24 15:52 evening.vim
+-rw-r--r-- 1 root root 1958 May 24 15:52 industry.vim
+-rw-r--r-- 1 root root 3555 May 24 15:52 koehler.vim
+-rw-r--r-- 1 root root 2460 May 24 15:52 morning.vim
+-rw-r--r-- 1 root root 2006 May 24 15:52 murphy.vim
+-rw-r--r-- 1 root root 1037 May 24 15:52 pablo.vim
+-rw-r--r-- 1 root root 2673 May 24 15:52 peachpuff.vim
+-rw-r--r-- 1 root root 1393 May 24 15:52 ron.vim
+-rw-r--r-- 1 root root 2720 May 24 15:52 shine.vim
+-rw-r--r-- 1 root root 2445 May 24 15:52 slate.vim
+drwxr-xr-x 2 root root 4096 Jul  9 11:57 tools
+-rw-r--r-- 1 root root 1629 May 24 15:52 torte.vim
+-rw-r--r-- 1 root root 1840 May 24 15:52 zellner.vim

@@ -3,20 +3,19 @@ set output "all_data.png"; \
 \
 set logscale x 2; \
 set format x "%.01se%S"; \
-set format y "%f"; \
+set format y "%.1f"; \
 \
-set style line 1 lt 1 lw 1 pt 7 ps 0.5; \
-set pointintervalbox 3; \
+set style line 1 lw 1 lc rgb "red"
 \
 set title "time per upate for part 2"; \
 set xlabel "number of objects"; \
 set ylabel "time (ms)"; \
 \
 plot \
-    "p1_data.dat" using 1:2 with linespoints ls 1, \
-    "p2_data.dat" using 1:2 with linespoints ls 1, \
-    "p3_data_double.dat" using 1:2 with linespoints ls 1, \
-    "p3_data_int8_t.dat" using 1:2 with linespoints ls 1, \
-    "p3_data_int16_t.dat" using 1:2 with linespoints ls 1, \
-    "p3_data_int32_t.dat" using 1:2 with linespoints ls 1, \
-    "p3_data_int64_t.dat" using 1:2 with linespoints ls 1;
+    "p1_data.dat"         using 1:2 with linespoints t "python num"   , \
+    "p2_data.dat"         using 1:2 with linespoints t "c float"  , \
+    "p3_data_double.dat"  using 1:2 with linespoints t "c double" , \
+    "p3_data_int8_t.dat"  using 1:2 with linespoints t "c int8"   , \
+    "p3_data_int16_t.dat" using 1:2 with linespoints t "c int16"  , \
+    "p3_data_int32_t.dat" using 1:2 with linespoints t "c int32"  , \
+    "p3_data_int64_t.dat" using 1:2 with linespoints t "c int64"  ;

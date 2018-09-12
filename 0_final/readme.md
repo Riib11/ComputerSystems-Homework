@@ -45,8 +45,8 @@ I used this tool for measuring the memory usage: https://gist.github.com/netj/52
 In each run, the program iterated over the full range of object counts. However, note that the c program used many more iterations per run, as specified in `main.c`, than the python program, as specified in `update_locations.py`. 
 
 Peak memory usages
-- pyton num: 25856 units
-- c float: 1608816 units
+- pyton num: 25_856 units
+- c float: 1_608_816 units
 
 
 

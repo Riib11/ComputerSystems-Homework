@@ -64,16 +64,16 @@ double pow(double x, double y);
 
 int get_iters(double si) {
     if (si < 10) {
-        return 200;
+        return 100;
     } else if(si < 16) {
-        return 50;
+        return 20;
     } else {
-        return 3;
+        return 2;
     }
 }
 
 int ITERS = 1;
-int SIZE_P2_MAX = 16;
+int SIZE_P2_MAX = 24;
 
 int main(void) {
 

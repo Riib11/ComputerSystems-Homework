@@ -26,7 +26,7 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
     <itemPath>data.txt</itemPath>
-    <itemPath>p2_data_double.dat</itemPath>
+    <itemPath>p3_data_double.dat</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -45,7 +45,7 @@
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="p2_data_double.dat" ex="false" tool="3" flavor2="0">
+      <item path="p3_data_double.dat" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -72,7 +72,7 @@
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="p2_data_double.dat" ex="false" tool="3" flavor2="0">
+      <item path="p3_data_double.dat" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

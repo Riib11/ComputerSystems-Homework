@@ -1,0 +1,4 @@
+In each run, the program iterated over the full range of object counts. However, the c program used many more iterations per run, as specified in `main.c`, than the python program, as specified in `update_locations.py`. 
+
+pyton num: 25856 units
+c float: 1608816 units

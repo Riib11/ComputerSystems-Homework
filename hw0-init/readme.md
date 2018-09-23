@@ -6,7 +6,7 @@ a) For 2^8 objects, it takes about 10,000 iteration to get a mean stable to the 
 
 b) Since the program automatically takes the mean of `iters` number of trials, I can just use the resulting number by choosing the judge an entry by its mean time for a number of objects.
 
-c) (include graph)
+c) (in all_data.png)
 
 ## 2.
 

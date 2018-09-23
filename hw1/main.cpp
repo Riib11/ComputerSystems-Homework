@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     // of the universe
     srand((unsigned) 123456789);
     
-    measure_range_latencies();
+    measure_range_latencies(false);
     
     return 0;
 }

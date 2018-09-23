@@ -1,0 +1,14 @@
+set terminal png; \
+set output "part2.png"; \
+\
+set logscale x 2; \
+set format x "%.01se%S"; \
+set format y "%.1f"; \
+\
+set style line 1 lw 1 lc rgb "red"
+\
+set title "effect of memory buffer size on access latency"; \
+set xlabel "size of buffer (kB)"; \
+set ylabel "time (ns)"; \
+\
+plot "../data/p2_data.dat" using 1:2 with linespoints t "access latency";

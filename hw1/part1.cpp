@@ -18,17 +18,25 @@
 #include <string>
 #include <cstdlib>
 
+typedef std::chrono::duration<double> duration;
+
 // gets a random int in the range [0..n-1]
 int random_index(int n) { return std::rand() % n; }
 
 // number of trials to use in calculating
 // the average latency
 const int TRIALS = std::pow(2,24);
-//const int TRIALS = 10;
 
-typedef std::chrono::duration<double> duration;
-
-void measure_latency(int n) {
+/*
+ * measure_latency:
+ * 
+ * measures the mean latency in accessing a byte
+ * of memory from a `n`-byte buffer.
+ * 
+ * `readable` flags the output to be formatted in a
+ * human-readable way. otherwise, catered to gnuplot
+*/
+void measure_latency(int n, bool readable) {
     
     // create a buffer of `n` bytes (chars)
     std::vector<char> buffer(n);
@@ -59,16 +67,32 @@ void measure_latency(int n) {
     // calculate average latency
     duration average_elapsed_seconds = total_elapsed_seconds / TRIALS;
     duration average_elapsed_nanosecs = average_elapsed_seconds * std::pow(10,9);
-    std::cout << "size of buffer: " << std::to_string(n/1000) << " kb\n"
-              << "average latency: "
-                    << average_elapsed_nanosecs.count() << " ns\n\n";
+    
+    // for a human-readable output format
+    if (readable) {
+        std::cout << "size of buffer: " << std::to_string(n/1000) << " kb\n"
+                  << "average latency: "
+                        << average_elapsed_nanosecs.count() << " ns\n\n";    
+    // for a gnuplot-readable output format
+    } else {
+        std::cout << std::to_string(n/1000) << " "
+                  << average_elapsed_nanosecs.count() << "\n";
+    }
 }
 
 const int BUFFER_SIZE_EXP_MIN = 10;
 const int BUFFER_SIZE_EXP_MAX = 26;
 
-void measure_range_latencies() {
+/*
+ * measure_range_latencies:
+ * 
+ * runs `measure_latency` over a range of buffer sizes
+ * defined by the above constants.
+ * 
+ * see `measure_latency` for description of `readable`
+ */
+void measure_range_latencies(bool readable) {
     for (int i = BUFFER_SIZE_EXP_MIN; i <= BUFFER_SIZE_EXP_MAX; i++) {
-        measure_latency(std::pow(2,i));
+        measure_latency(std::pow(2,i), readable);
     }
 }

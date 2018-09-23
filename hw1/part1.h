@@ -9,8 +9,8 @@
 #ifndef PART1_H
 #define PART1_H
 
-void measure_range_latencies();
-void measure_latency(int n);
+void measure_range_latencies(bool readable=true);
+void measure_latency(int n, bool readable=true);
 
 #endif /* PART1_H */
 

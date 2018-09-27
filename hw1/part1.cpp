@@ -22,7 +22,7 @@
 //       so that it can hold it's own indecies
 
 typedef std::chrono::duration<double> duration;
-typedef __int32 bufferunit;
+typedef __int32_t bufferunit;
 
 // gets a random int in the range [0..n-1]
 bufferunit random_index(bufferunit n) {
@@ -73,26 +73,20 @@ void measure_latency(bufferunit n, bool readable) {
     auto duration_secs_avg = duration_secs / TRIALS;
     auto duration_nanosecs_avg = duration_secs_avg * std::pow(10,9);
 
-    // TODO: write outputs
-
-    // TODO: remove the rest of this function
-    // ---------------------------------------
-    // calculate average latency
-    duration average_elapsed_seconds = total_elapsed_seconds / TRIALS;
-    duration average_elapsed_nanosecs = average_elapsed_seconds * std::pow(10,9);
     
-    // for a human-readable output format
+    auto buffer_size_bytes = buffer_units_to_bytes(n)/1000;
+    auto average_latency_nanosecs = duration_nanosecs.count();
     if (readable) {
-        std::cout << "size of buffer: "
-                        << std::to_string(n/1000) << " kb\n"
-                  << "average latency: "
-                        << average_elapsed_nanosecs.count() << " ns\n\n";    
-    // for a gnuplot-readable output format
+        std::cout
+            << "size of buffer: "
+                << buffer_size_bytes << " kb\n"
+            << "average latency: "
+                << average_latency_nanosecs << " ns\n\n";
     } else {
-        std::cout << std::to_string(n/1000) << " "
-                  << average_elapsed_nanosecs.count() << "\n";
+        std::cout
+            << buffer_size_bytes << " "
+            << average_latency_nanosecs << "\n";
     }
-    // ---------------------------------------
 }
 
 // buffer size constants
@@ -106,6 +100,10 @@ bufferunit buffer_size_bytes_exp_to_buffer_units(unsigned buffer_size_bytes_exp)
     //   number of entries in buffer
     return std::pow(2,buffer_size_bytes_exp) / BUFFER_UNIT_SIZE_BYTES;
 }
+
+unsigned buffer_unit_to_bytes(bufferunit x) {
+    return x * BUFFER_UNIT_SIZE_BYTES;
+} 
 
 /*
  * measure_range_latencies:

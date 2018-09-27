@@ -22,16 +22,35 @@
 //       so that it can hold it's own indecies
 
 typedef std::chrono::duration<double> duration;
-typedef __int32_t bufferunit;
+typedef __int32_t bufferunit; // big enough so that each
+                              // entry in the buffer can
+                              // represent an index of the buffer
+
+// buffer size constants
+const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 10; // min exponent
+const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 30; // max exponent
+const unsigned BUFFER_UNIT_SIZE_BYTES    = 32; // 32 bytes per entry in buffer
+
+bufferunit buffer_size_bytes_exp_to_buffer_units(unsigned buffer_size_bytes_exp) {
+    // 2^i gives the number of bytes in buffer
+    // 2^i/BUFFER_UNIT_SIZE_BYTES gives the
+    //   number of entries in buffer
+    return std::pow(2,buffer_size_bytes_exp) / BUFFER_UNIT_SIZE_BYTES;
+}
+
+unsigned buffer_units_to_bytes(bufferunit x) {
+    return x * BUFFER_UNIT_SIZE_BYTES;
+} 
 
 // gets a random int in the range [0..n-1]
 bufferunit random_index(bufferunit n) {
-    return rnd = 0 + int((n * rand()) / (RAND_MAX + 1.0));
+    return bufferunit(n * (rand() / (RAND_MAX + 1.0)));
 }
 
 // number of trials to use in calculating
 // the average latency
-const int TRIALS = std::pow(2,24);
+const int TRIALS = std::pow(2,28);
+//const int TRIALS = std::pow(2,3);
 
 /*
  * measure_latency:
@@ -49,61 +68,42 @@ void measure_latency(bufferunit n, bool readable) {
     for (bufferunit i = 0; i < n; i++)
         buffer[i] = random_index(n);
     
-    // store the total of the latencies
-    std::chrono::duration<double> total_elapsed_seconds
-        = duration::zero();
-
+    // `volatile` makes sure this var
+    // and the following loop is not optimized away
+    volatile bufferunit index = 0;
+    
     // start timer
     auto start = std::chrono::steady_clock::now();
 
-    bufferunit index = 0;
     // measure the latency TRIALS times
     for (int i = 0; i < TRIALS; i++) {
         // access an entry of the buffer,
         // also setting the next entry index
         // (yielded from previous random generation)
         index = buffer.at(index);
+        asm(""); // makes sure loop not optimized away
     }
 
     // end timer
     auto end = std::chrono::steady_clock::now();
-
-    // calculate average duration
-    auto duration_secs = end - start;
-    auto duration_secs_avg = duration_secs / TRIALS;
-    auto duration_nanosecs_avg = duration_secs_avg * std::pow(10,9);
-
+    std::chrono::duration<double> duration = end - start;
     
-    auto buffer_size_bytes = buffer_units_to_bytes(n)/1000;
-    auto average_latency_nanosecs = duration_nanosecs.count();
+    // record latency
+    auto latency_avg_nanosecs = duration.count() / TRIALS * std::pow(10,9);
+    auto buffer_size_kilobytes = buffer_units_to_bytes(n)/1000;
+    
     if (readable) {
         std::cout
             << "size of buffer: "
-                << buffer_size_bytes << " kb\n"
+                << buffer_size_kilobytes << " kb\n"
             << "average latency: "
-                << average_latency_nanosecs << " ns\n\n";
+                << latency_avg_nanosecs << " ns\n\n";
     } else {
         std::cout
-            << buffer_size_bytes << " "
-            << average_latency_nanosecs << "\n";
+            << buffer_size_kilobytes << " "
+            << latency_avg_nanosecs << "\n";
     }
 }
-
-// buffer size constants
-const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 10; // min exponent
-const unsigned BUFFER_SIZE_BYES_EXP_MAX  = 26; // max exponent
-const unsigned BUFFER_UNIT_SIZE_BYTES    = 32; // 32 bytes per entry in buffer
-
-bufferunit buffer_size_bytes_exp_to_buffer_units(unsigned buffer_size_bytes_exp) {
-    // 2^i gives the number of bytes in buffer
-    // 2^i/BUFFER_UNIT_SIZE_BYTES gives the
-    //   number of entries in buffer
-    return std::pow(2,buffer_size_bytes_exp) / BUFFER_UNIT_SIZE_BYTES;
-}
-
-unsigned buffer_unit_to_bytes(bufferunit x) {
-    return x * BUFFER_UNIT_SIZE_BYTES;
-} 
 
 /*
  * measure_range_latencies:
@@ -116,8 +116,9 @@ unsigned buffer_unit_to_bytes(bufferunit x) {
 
 
 void measure_range_latencies(bool readable) {
-    for (unsigned i = BUFFER_SIZE_EXP_MIN; i <= BUFFER_SIZE_EXP_MAX; i++) {
-        measure_latency(buffer_size_bytes_exp_to_buffer_units(i),
+    for (unsigned i = BUFFER_SIZE_BYTES_EXP_MIN; i <= BUFFER_SIZE_BYTES_EXP_MAX; i++) {
+        measure_latency(
+            buffer_size_bytes_exp_to_buffer_units(i),
             readable);
     }
 }

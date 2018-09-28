@@ -26,16 +26,23 @@ typedef __int32_t bufferunit; // big enough so that each
                               // entry in the buffer can
                               // represent an index of the buffer
 
+// number of trials to use in calculating
+// the average latency
+//const int TRIALS = std::pow(2,28);
+const int TRIALS = std::pow(2,28);
+
 // buffer size constants
 const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 10; // min exponent
-const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 30; // max exponent
-const unsigned BUFFER_UNIT_SIZE_BYTES    = 32; // 32 bytes per entry in buffer
+const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 24; // max exponent
+const unsigned BUFFER_UNIT_SIZE_BYTES    = 32/8; // size of buffer entries
 
-bufferunit buffer_size_bytes_exp_to_buffer_units(unsigned buffer_size_bytes_exp) {
-    // 2^i gives the number of bytes in buffer
-    // 2^i/BUFFER_UNIT_SIZE_BYTES gives the
-    //   number of entries in buffer
-    return std::pow(2,buffer_size_bytes_exp) / BUFFER_UNIT_SIZE_BYTES;
+// 2^i is the number of bytes in buffer
+// 2^i/BUFFER_UNIT_SIZE_BYTES is the
+//   number of entries in buffer
+bufferunit buffer_size_bytes_exp_to_buffer_units(
+    unsigned buffer_size_bytes_exp) {
+    return std::pow(2,buffer_size_bytes_exp)
+               / BUFFER_UNIT_SIZE_BYTES;
 }
 
 unsigned buffer_units_to_bytes(bufferunit x) {
@@ -46,11 +53,6 @@ unsigned buffer_units_to_bytes(bufferunit x) {
 bufferunit random_index(bufferunit n) {
     return bufferunit(n * (rand() / (RAND_MAX + 1.0)));
 }
-
-// number of trials to use in calculating
-// the average latency
-const int TRIALS = std::pow(2,28);
-//const int TRIALS = std::pow(2,3);
 
 /*
  * measure_latency:
@@ -116,6 +118,10 @@ void measure_latency(bufferunit n, bool readable) {
 
 
 void measure_range_latencies(bool readable) {
+    // log size of bufferunit (in bytes)
+    // std::cout << "size of bufferunit: "
+    //              << sizeof(bufferunit) << " bytes\n";
+    
     for (unsigned i = BUFFER_SIZE_BYTES_EXP_MIN; i <= BUFFER_SIZE_BYTES_EXP_MAX; i++) {
         measure_latency(
             buffer_size_bytes_exp_to_buffer_units(i),

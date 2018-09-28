@@ -29,11 +29,11 @@ typedef __int32_t bufferunit; // big enough so that each
 // number of trials to use in calculating
 // the average latency
 //const int TRIALS = std::pow(2,28);
-const int TRIALS = std::pow(2,28);
+const unsigned TRIALS = std::pow(2,30);
 
 // buffer size constants
-const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 10; // min exponent
-const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 24; // max exponent
+const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 30; // min exponent
+const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 30; // max exponent
 const unsigned BUFFER_UNIT_SIZE_BYTES    = 32/8; // size of buffer entries
 
 // 2^i is the number of bytes in buffer
@@ -78,7 +78,7 @@ void measure_latency(bufferunit n, bool readable) {
     auto start = std::chrono::steady_clock::now();
 
     // measure the latency TRIALS times
-    for (int i = 0; i < TRIALS; i++) {
+    for (unsigned i = 0; i < TRIALS; i++) {
         // access an entry of the buffer,
         // also setting the next entry index
         // (yielded from previous random generation)
@@ -96,7 +96,7 @@ void measure_latency(bufferunit n, bool readable) {
     
     if (readable) {
         std::cout
-            << "size of buffer: "
+            << "size of buffer (rounded): "
                 << buffer_size_kilobytes << " kb\n"
             << "average latency: "
                 << latency_avg_nanosecs << " ns\n\n";

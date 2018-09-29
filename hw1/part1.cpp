@@ -17,6 +17,8 @@
 #include <math.h>
 #include <string>
 #include <cstdlib>
+#include <algorithm>
+#include <random>
 
 // TODO: make the indecies and unit buffer size equal to 32 bytes,
 //       so that it can hold it's own indecies
@@ -32,8 +34,8 @@ typedef __int32_t bufferunit; // big enough so that each
 const unsigned TRIALS = std::pow(2,30);
 
 // buffer size constants
-const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 30; // min exponent
-const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 30; // max exponent
+const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 10; // min exponent
+const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 20; // 30 // max exponent
 const unsigned BUFFER_UNIT_SIZE_BYTES    = 32/8; // size of buffer entries
 
 // 2^i is the number of bytes in buffer
@@ -64,13 +66,6 @@ bufferunit random_index(bufferunit n) {
  * human-readable way. otherwise, catered to gnuplot
 */
 void measure_latency(bufferunit n, bool readable) {
-    
-    // create a buffer of `n` bufferunits
-    /*
-    std::vector<bufferunit> buffer(n);
-    for (bufferunit i = 0; i < n; i++)
-        buffer[i] = random_index(n);
-    */
 
     // TODO: this shuffling allows for loops
     // to make acyclic, need to shuffle unique
@@ -110,12 +105,15 @@ void measure_latency(bufferunit n, bool readable) {
     auto latency_avg_nanosecs = duration.count() / TRIALS * std::pow(10,9);
     auto buffer_size_kilobytes = buffer_units_to_bytes(n)/1000;
     
+    // print in human readable format
     if (readable) {
         std::cout
             << "size of buffer (rounded): "
                 << buffer_size_kilobytes << " kb\n"
             << "average latency: "
                 << latency_avg_nanosecs << " ns\n\n";
+    
+    // print in gnuplot-friendly format
     } else {
         std::cout
             << buffer_size_kilobytes << " "
@@ -131,13 +129,7 @@ void measure_latency(bufferunit n, bool readable) {
  * 
  * see `measure_latency` for description of `readable`
  */
-
-
 void measure_range_latencies(bool readable) {
-    // log size of bufferunit (in bytes)
-    // std::cout << "size of bufferunit: "
-    //              << sizeof(bufferunit) << " bytes\n";
-    
     for (unsigned i = BUFFER_SIZE_BYTES_EXP_MIN; i <= BUFFER_SIZE_BYTES_EXP_MAX; i++) {
         measure_latency(
             buffer_size_bytes_exp_to_buffer_units(i),

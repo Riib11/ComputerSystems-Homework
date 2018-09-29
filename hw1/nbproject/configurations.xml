@@ -80,9 +80,11 @@
       </toolsSet>
       <compileType>
         <ccTool>
+          <standard>8</standard>
           <incDir>
             <pElem>build</pElem>
           </incDir>
+          <commandLine>-O3 -Wextra -pedantic</commandLine>
           <warningLevel>2</warningLevel>
         </ccTool>
       </compileType>

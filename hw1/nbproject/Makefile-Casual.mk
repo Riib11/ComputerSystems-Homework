@@ -43,8 +43,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=
-CXXFLAGS=
+CCFLAGS=-O3 -Wextra -pedantic
+CXXFLAGS=-O3 -Wextra -pedantic
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -66,12 +66,12 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw1: ${OBJECTFILES}
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall -Ibuild -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -Wall -Ibuild -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/part1.o: part1.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall -Ibuild -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/part1.o part1.cpp
+	$(COMPILE.cc) -g -Wall -Ibuild -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/part1.o part1.cpp
 
 # Subprojects
 .build-subprojects:

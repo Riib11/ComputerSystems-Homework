@@ -20,9 +20,6 @@
 #include <algorithm>
 #include <random>
 
-// TODO: make the indecies and unit buffer size equal to 32 bytes,
-//       so that it can hold it's own indecies
-
 typedef std::chrono::duration<double> duration;
 typedef __int32_t bufferunit; // big enough so that each
                               // entry in the buffer can
@@ -39,8 +36,7 @@ const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 31; // 30 // max exponent
 const unsigned BUFFER_UNIT_SIZE_BYTES    = 32/8; // size of buffer entries
 
 // 2^i is the number of bytes in buffer
-// 2^i/BUFFER_UNIT_SIZE_BYTES is the
-//   number of entries in buffer
+// 2^i/BUFFER_UNIT_SIZE_BYTES is the number of entries in buffer
 bufferunit buffer_size_bytes_exp_to_buffer_units(
     unsigned buffer_size_bytes_exp) {
     return std::pow(2,buffer_size_bytes_exp)
@@ -66,10 +62,6 @@ bufferunit random_index(bufferunit n) {
  * human-readable way. otherwise, catered to gnuplot
 */
 void measure_latency(bufferunit n, bool readable) {
-
-    // TODO: this shuffling allows for loops
-    // to make acyclic, need to shuffle unique
-    // values, rather that choose each independently
 
     // create a buffer of `n` bufferunits
     std::vector<bufferunit> buffer(n);

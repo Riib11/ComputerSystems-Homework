@@ -66,10 +66,26 @@ bufferunit random_index(bufferunit n) {
 void measure_latency(bufferunit n, bool readable) {
     
     // create a buffer of `n` bufferunits
+    /*
     std::vector<bufferunit> buffer(n);
     for (bufferunit i = 0; i < n; i++)
         buffer[i] = random_index(n);
-    
+    */
+
+    // TODO: this shuffling allows for loops
+    // to make acyclic, need to shuffle unique
+    // values, rather that choose each independently
+
+    // create a buffer of `n` bufferunits
+    std::vector<bufferunit> buffer(n);
+    for (bufferunit i = 0; i < n; i++)
+        buffer[i] = i;
+
+    // shuffle values
+    auto rng = std::default_random_engine {};
+    std::shuffle(std::begin(buffer), std::end(buffer), rng);
+
+
     // `volatile` makes sure this var
     // and the following loop is not optimized away
     volatile bufferunit index = 0;

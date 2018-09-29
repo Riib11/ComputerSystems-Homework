@@ -31,11 +31,11 @@ typedef __int32_t bufferunit; // big enough so that each
 // number of trials to use in calculating
 // the average latency
 //const int TRIALS = std::pow(2,28);
-const unsigned TRIALS = std::pow(2,30);
+const unsigned TRIALS = std::pow(2,25);
 
 // buffer size constants
 const unsigned BUFFER_SIZE_BYTES_EXP_MIN = 10; // min exponent
-const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 20; // 30 // max exponent
+const unsigned BUFFER_SIZE_BYTES_EXP_MAX = 31; // 30 // max exponent
 const unsigned BUFFER_UNIT_SIZE_BYTES    = 32/8; // size of buffer entries
 
 // 2^i is the number of bytes in buffer

@@ -9,36 +9,41 @@
 
 class Cache::Impl {
 
-    index_type maxmem_;
-    evictor_type evictor_;
-    hash_func hasher_;
-    index_type memused_;
+    index_type maxmem_;    //
+    evictor_type evictor_; // () -> index_type
+    hash_func hasher_;     // key_type -> index_type
+    index_type memused_;   //
     
 public:
     
     Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
     : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0) {
+        // keeps track of everything we've ever seen
+        mem_values = vector<value_type>;
+        mem_keys = vector<key_type>;
         
+        // keeps track of things on stack
+        stack = vector<key_type>;
     }
     
     void
     set(key_type key, val_type val, index_type size) {
-        
+        // TODO
     }
     
     val_type
     get(key_type key, index_type size) {
-        
+        // TODO
     }
     
     void
     del(key_type key) {
-        
+        // TODO
     }
     
     index_type
     space_used() const {
-        
+        // TODO
     }
     
 };

@@ -36,7 +36,7 @@ public:
     } 
     val_type
     get(key_type key, index_type size) {
-        // TODO
+	    key = new[]
     }
     
     void

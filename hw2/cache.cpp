@@ -29,8 +29,7 @@ public:
     void
     set(key_type key, val_type val, index_type size) {
         // TODO
-    }
-    
+    } 
     val_type
     get(key_type key, index_type size) {
         // TODO

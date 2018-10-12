@@ -11,7 +11,7 @@ class Cache::Impl {
 
     index_type maxmem_;    //
     evictor_type evictor_; // () -> index_type
-    hash_func hasher_;     // key_type -> index_type
+    hash_func hasher_;     // key_type -> index_type (in internal data)
     index_type memused_;   //
     
 public:
@@ -21,6 +21,10 @@ public:
         // keeps track of everything we've ever seen
         mem_values = vector<value_type>;
         mem_keys = vector<key_type>;
+        
+        while (int i = 0; i < 10; i++) {
+            
+        }
         
         // keeps track of things on stack
         stack = vector<key_type>;

@@ -22,10 +22,6 @@ public:
         mem_values = vector<value_type>;
         mem_keys = vector<key_type>;
         
-        while (int i = 0; i < 10; i++) {
-            
-        }
-        
         // keeps track of things on stack
         stack = vector<key_type>;
     }
@@ -36,7 +32,7 @@ public:
     } 
     val_type
     get(key_type key, index_type size) {
-	    key = new[]
+        // TODO
     }
     
     void

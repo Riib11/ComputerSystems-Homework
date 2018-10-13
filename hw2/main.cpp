@@ -12,13 +12,24 @@
  */
 
 #include <cstdlib>
-#include <cache.h>
+//#include <cache.h>
+#include <vector>
+#include <iostream>
+
+using namespace std;
 
 /*
  * 
  */
 int main(int argc, char** argv) {
 
+    vector<string> x;
+    x = vector<string>(10);
+    
+    for (auto i = x.begin(); i != x.end(); ++i) {
+        std::cout << *i << ",";
+    }
+        
     return 0;
 }
 

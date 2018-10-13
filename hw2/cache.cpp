@@ -7,37 +7,52 @@
 #include "cache.h"
 #include <cstdlib>
 #include <vector>
+#include <iostream>
+#include <unordered_map>
 
 class Cache::Impl {
 
     index_type maxmem_;    //
     index_type memused_;   //
     evictor_type evictor_; // () -> index_type
-    hash_func hasher_;     // key_type -> index_type (in internal data)
-    
-    vector<val_type> memory;
-    vector<key_type> stack;
-    index_type stack_head;
+    hash_func hasher_;     // key_type -> index_type (in index_cache)
     
 public:
     
+    std::vector<val_type> memory_;
+    std::vector<index_type> index_cache_;
+    std::vector<index_type> size_cache_;
+    
+    index_type index_cache_default_;
+        
     Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
     : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0) {
-        
+        // initialize cache memory
+        index_cache_ = std::vector<index_type>(maxmem);
+        size_cache_  = std::vector<index_type>(maxmem);
+        index_cache_default_ = index_cache_[0];
     }
     
     void
     set(key_type key, val_type val, index_type size) {
-        // TODO
-    } 
+        memory_.push_back(val);                     // put new val in memory
+        index_type i_cache    = hasher_(key);       // index in cache
+        index_type i_memory   = memory_.size();     // index of new val in memory
+        index_cache_[i_cache] = i_memory;           // index_cache has index in memory
+        size_cache_[i_cache]  = size;               // size_cache has size of val
+    }
+    
     val_type
     get(key_type key, index_type size) {
-        // TODO
+        index_type i_cache  = hasher_(key);         // get index in cache
+        index_type i_memory = index_cache_[i_cach]; // get index in memory (value in index_cache)
+        return memory_[i_memory];                   // get value in memory
     }
     
     void
     del(key_type key) {
-        // TODO
+        index_type i_cache = hasher_(key);            // get index in cache
+        index_cache_[i_cache] = index_cache_default_; // reset the index_cache value
     }
     
     index_type

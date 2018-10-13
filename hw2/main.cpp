@@ -12,6 +12,7 @@
  */
 
 #include <cstdlib>
+#include <cache.h>
 
 /*
  * 

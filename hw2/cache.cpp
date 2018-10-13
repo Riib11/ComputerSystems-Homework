@@ -6,24 +6,24 @@
 
 #include "cache.h"
 #include <cstdlib>
+#include <vector>
 
 class Cache::Impl {
 
     index_type maxmem_;    //
+    index_type memused_;   //
     evictor_type evictor_; // () -> index_type
     hash_func hasher_;     // key_type -> index_type (in internal data)
-    index_type memused_;   //
+    
+    vector<val_type> memory;
+    vector<key_type> stack;
+    index_type stack_head;
     
 public:
     
     Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
     : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0) {
-        // keeps track of everything we've ever seen
-        mem_values = vector<value_type>;
-        mem_keys = vector<key_type>;
         
-        // keeps track of things on stack
-        stack = vector<key_type>;
     }
     
     void

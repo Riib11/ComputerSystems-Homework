@@ -12,6 +12,8 @@
  */
 
 #include <cstdlib>
+#include <iostream>
+#include <unordered_map>
 
 using namespace std;
 
@@ -20,6 +22,20 @@ using namespace std;
  */
 int main(int argc, char** argv) {
 
+    unordered_map<string, pair<int,int>> map;
+    map["a"] = make_pair(1,1);
+    map["b"] = make_pair(2,2);
+    
+    if (map.find("x") == map.end()) {
+        cout << "not found\n";
+    }
+
+    for (auto& x : map) {
+        cout << x.first << " : "
+                << x.second.first << ", "
+                << x.second.second << "\n";
+    }
+    
     return 0;
 }
 

@@ -8,8 +8,11 @@
 #include <cstdlib>
 #include <unordered_map>
 #include <map>
+#include <iostream>
 
-
+/*
+ * CACHE :: IMPLEMENTATION
+ */
 class Cache::Impl {
 
     index_type   maxmem_;   //
@@ -87,11 +90,12 @@ public:
 
 // Create a new cache object with a given max memory capacity
 Cache::Cache(
-index_type maxmem,
-evictor_type evictor,
-hash_func hasher)
-: pImpl_(new Impl(maxmem, evictor, hasher)) {
-    
+    index_type maxmem,
+    evictor_type evictor,
+    hash_func hasher)
+    : pImpl_(new Impl(maxmem, evictor, hasher))
+{
+    std::cout << "created new cache\n";
 }
 
 // Cleanup cache

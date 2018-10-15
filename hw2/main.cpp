@@ -18,13 +18,23 @@
 using namespace std;
 
 /*
- * 
+ * MAIN
  */
 int main(int argc, char** argv) {
+    
     Cache::key_type   key  = "k";
     Cache::val_type   val  = "v";
     Cache::index_type size = 1;
     
+    Cache(10);
+        
+//    auto x = Cache(10).get(key, size);    
+//    cout << x << "\n";
+
+//    Cache(10).set(key, val, size);
+//    x = Cache(10).get(key, size);    
+//    cout << x << "\n";
+
     return 0;
 }
 

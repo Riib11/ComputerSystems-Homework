@@ -69,7 +69,7 @@ public:
     }
     
     val_type
-    get(key_type key, index_type& val_size) const {
+    get(key_type key, index_type val_size) const {
         // key not in cache
         if (contains(key)) {
             return NULL;
@@ -118,8 +118,8 @@ set(key_type key, val_type val, index_type size) {
 }
 
 Cache::val_type Cache::
-get(key_type key, index_type& val_size) const {
-    pImpl_->get(key, size);
+get(key_type key, index_type val_size) const {
+    pImpl_->get(key, val_size);
 }
 
 void Cache::

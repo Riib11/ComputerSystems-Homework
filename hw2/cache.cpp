@@ -49,10 +49,15 @@ public:
         cache_.erase(*key_min);
     }
     
+    bool
+    contains(key_type key) const {
+        return cache_.find(key) != cache_.end();
+    }
+    
     void
     set(key_type key, val_type val, index_type size) {
         // key not already in cache
-        if (cache_.find(key) == cache_.end()) {
+        if (!contains(key)) {
             // cache is full, so need to make room
             if (memused_ == maxmem_) {
                 del_smallest();
@@ -64,23 +69,20 @@ public:
     }
     
     val_type
-    get(key_type key, index_type& size) {
-        // key not already in cache
-        if (cache_.find(key) == cache_.end()) {
-            val_type val = memory_[key];    // get value from memory
-            set(key, val, size);            // put value into cache
-            return val;
-        }
-        // key already in cache
-        else {
-            return cache_[key].first;   
+    get(key_type key, index_type& val_size) const {
+        // key not in cache
+        if (contains(key)) {
+            return NULL;
+//            return cache_[key]->first;
+        } else {
+            return NULL;
         }
     }
     
     void
     del(key_type key) {
         // if key is in cache
-        if (cache_.find(key) != cache_.end()) {
+        if (contains(key)) {
             auto it = cache_.at(key);
             index_type size = it.second;
             cache_.erase(key); // delete from cache
@@ -116,7 +118,7 @@ set(key_type key, val_type val, index_type size) {
 }
 
 Cache::val_type Cache::
-get(key_type key, index_type& size) const {
+get(key_type key, index_type& val_size) const {
     pImpl_->get(key, size);
 }
 

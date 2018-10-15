@@ -4,9 +4,8 @@
  * and open the template in the editor.
  */
 
-#include "cache.h"
 #include <cstdlib>
-#include <vector>
+#include <cache.h>
 #include <iostream>
 #include <unordered_map>
 
@@ -18,18 +17,12 @@ class Cache::Impl {
     hash_func hasher_;     // key_type -> index_type
     
 public:
-    
-//    std::vector<val_type> memory_;
-    std::vector<index_type> index_cache_;
-    std::vector<index_type> size_cache_;
-    
+        
     std::unordered_map<key_type, val_type>
     memory_; // key => value
     std::unordered_map<key_type, std::pair<val_type, index_type>>
     cache_; // key => value, size
     
-    
-    index_type index_cache_default_;
         
     Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
     : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0) {
@@ -57,7 +50,7 @@ public:
     void
     set(key_type key, val_type val, index_type size) {
         // key not already in cache
-        if (cache_.find_key(key) == cache_.end()) {
+        if (cache_.find(key) == cache_.end()) {
             // cache is full
             if (memused_ == maxmem_) {
                 // so remove smallest value
@@ -78,7 +71,7 @@ public:
     
     val_type
     get(key_type key, index_type size) {
-        return cache_[key];
+        return cache_[key]->first;
     }
     
     void

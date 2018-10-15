@@ -73,7 +73,16 @@ public:
     
     val_type
     get(key_type key, index_type size) {
-        return cache_[key].first;
+        // key not already in cache
+        if (cache_.find(key) == cache_.end()) {
+            val_type val = memory_[key];    // get value from memory
+            set(key, val, size);            // put value into cache
+            return val;
+        }
+        // key already in cache
+        else {
+            return cache_[key].first;   
+        }
     }
     
     void
@@ -94,35 +103,31 @@ Cache::Cache(
     evictor_type evictor,
     hash_func hasher)
     : pImpl_(new Impl(maxmem, evictor, hasher))
-{
-    std::cout << "created new cache\n";
-}
+{}
 
 // Cleanup cache
-Cache::~Cache() {
-    
-}
+Cache::~Cache() {}
 
 /*
  * Defer function calls to Impl
  */
 
-void
-Cache::set(key_type key, val_type val, index_type size) {
+void Cache::
+set(key_type key, val_type val, index_type size) {
     pImpl_->set(key, val, size);
 }
 
-Cache::val_type
-Cache::get(key_type key, index_type& size) const {
+Cache::val_type Cache::
+get(key_type key, index_type& size) const {
     pImpl_->get(key, size);
 }
 
-void
-Cache::del(key_type key) {
+void Cache::
+del(key_type key) {
     pImpl_->del(key);
 }
 
-Cache::index_type
-Cache::space_used() const {
+Cache::index_type Cache::
+space_used() const {
     pImpl_->space_used();
 }

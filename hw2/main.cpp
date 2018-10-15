@@ -26,15 +26,10 @@ int main(int argc, char** argv) {
     Cache::val_type   val  = "v";
     Cache::index_type size = 1;
     
-    Cache(10);
-        
-//    auto x = Cache(10).get(key, size);    
-//    cout << x << "\n";
-
-//    Cache(10).set(key, val, size);
-//    x = Cache(10).get(key, size);    
-//    cout << x << "\n";
-
+    auto cache = new Cache(10);
+    cache->set(key, val, size);
+    auto x = cache->get(key, size);
+    
     return 0;
 }
 

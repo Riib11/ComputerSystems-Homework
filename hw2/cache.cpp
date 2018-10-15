@@ -72,8 +72,7 @@ public:
     get(key_type key, index_type val_size) const {
         // key not in cache
         if (contains(key)) {
-            return NULL;
-//            return cache_[key]->first;
+            return cache_.at(key).first;
         } else {
             return NULL;
         }

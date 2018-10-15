@@ -22,7 +22,14 @@ using namespace std;
  * 
  */
 int main(int argc, char** argv) {
+    auto key = "k";
+    const void* val = "v";
 
+    Cache* cache = new Cache(10);
+    cache->set("k", "v", 1);
+    
+    cout << "used " << cache->space_used() << " slots";
+    
     return 0;
 }
 

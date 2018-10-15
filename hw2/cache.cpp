@@ -27,10 +27,12 @@ public:
         
     Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
     : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0) {
-        // initialize cache memory
+        // init cache memory
         index_cache_ = std::vector<index_type>(maxmem);
         size_cache_  = std::vector<index_type>(maxmem);
         index_cache_default_ = index_cache_[0];
+        // init space used
+        memused_ = 0;
     }
     
     void
@@ -38,6 +40,8 @@ public:
         memory_.push_back(val);                     // put new val in memory
         index_type i_cache    = hasher_(key);       // index in cache
         index_type i_memory   = memory_.size();     // index of new val in memory
+        
+        
         
         if (index_cache_[i_cache] == index_cache_default_) { // this cache slot wasn't previously filled
             memused_++;                                      // so, we're adding a new entry

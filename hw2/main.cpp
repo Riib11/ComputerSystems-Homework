@@ -22,13 +22,18 @@ using namespace std;
  * 
  */
 int main(int argc, char** argv) {
-    auto key = "k";
-    const void* val = "v";
-
-    Cache* cache = new Cache(10);
-    cache->set("k", "v", 1);
+    Cache::key_type key    = "k";
+    Cache::val_type val  = "v";
+    Cache::index_type size = 1;
     
-    cout << "used " << cache->space_used() << " slots";
+    // test setting and getting
+    Cache* cache = new Cache(10);
+    cache->set(key, val, size);
+    Cache::val_type x = cache->get(key, size);
+    
+    // TODO: returns an address, but can't de-reference?
+    //       the problem seems to have to do with the cost void* type
+    cout << x;
     
     return 0;
 }

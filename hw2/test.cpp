@@ -21,9 +21,9 @@ void basic() {
     cache->set("c", "c", 3);
     
     // getting
-//    assert (cache->get("a", ) == "a");
-//    assert (cache->get("b", 2) == "b");
-//    assert (cache->get("c", 3) == "c");
+    assert (cache->get("a", ) == "a");
+    assert (cache->get("b", 2) == "b");
+    assert (cache->get("c", 3) == "c");
     
     // space used
     assert (cache->space_used() == 6);

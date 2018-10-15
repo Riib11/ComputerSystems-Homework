@@ -53,26 +53,18 @@ public:
     set(key_type key, val_type val, index_type size) {
         // key not already in cache
         if (cache_.find(key) == cache_.end()) {
-            // cache is full
+            // cache is full, so need to make room
             if (memused_ == maxmem_) {
-                // so remove smallest value
                 del_smallest();
-                // then add new value
-                cache_[key] = std::make_pair(val, size);
             }
-            // cache isn't full, so add new value
-            else {
-                cache_[key] = std::make_pair(val, size);
-            }
+            // adding new value will increase memused
+            memused_ += size;
         }
-        // key is already in cache, so change to new value
-        else {
-            cache_[key] = std::make_pair(val, size);
-        }
+        cache_[key] = std::make_pair(val, size);
     }
     
     val_type
-    get(key_type key, index_type size) {
+    get(key_type key, index_type& size) {
         // key not already in cache
         if (cache_.find(key) == cache_.end()) {
             val_type val = memory_[key];    // get value from memory
@@ -87,7 +79,13 @@ public:
     
     void
     del(key_type key) {
-        cache_.erase(key);
+        // if key is in cache
+        if (cache_.find(key) != cache_.end()) {
+            auto it = cache_.at(key);
+            index_type size = it.second;
+            cache_.erase(key); // delete from cache
+            memused_ -= size;  // decrease memused
+        }
     }
     
     index_type

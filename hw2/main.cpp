@@ -12,8 +12,8 @@
  */
 
 #include <cstdlib>
-#include <cache.h>
 #include <iostream>
+#include <test.h>
 
 using namespace std;
 
@@ -22,13 +22,7 @@ using namespace std;
  */
 int main(int argc, char** argv) {
     
-    Cache::key_type   key  = "k";
-    Cache::val_type   val  = "v";
-    Cache::index_type size = 1;
-    
-    auto cache = new Cache(10);
-    cache->set(key, val, size);
-    auto x = cache->get(key, size);
+    basic();
     
     return 0;
 }

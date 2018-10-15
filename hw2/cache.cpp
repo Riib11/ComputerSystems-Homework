@@ -38,6 +38,11 @@ public:
         memory_.push_back(val);                     // put new val in memory
         index_type i_cache    = hasher_(key);       // index in cache
         index_type i_memory   = memory_.size();     // index of new val in memory
+        
+        if (index_cache_[i_cache] == index_cache_default_) { // this cache slot wasn't previously filled
+            memused_++;                                      // so, we're adding a new entry
+        }
+        
         index_cache_[i_cache] = i_memory;           // index_cache has index in memory
         size_cache_[i_cache]  = size;               // size_cache has size of val
     }
@@ -45,7 +50,7 @@ public:
     val_type
     get(key_type key, index_type size) {
         index_type i_cache  = hasher_(key);         // get index in cache
-        index_type i_memory = index_cache_[i_cach]; // get index in memory (value in index_cache)
+        index_type i_memory = index_cache_[i_cache]; // get index in memory (value in index_cache)
         return memory_[i_memory];                   // get value in memory
     }
     
@@ -57,7 +62,7 @@ public:
     
     index_type
     space_used() const {
-        // TODO
+        return memused_;
     }
     
 };

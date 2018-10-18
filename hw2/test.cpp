@@ -3,6 +3,8 @@
 #include <iostream>
 #include "cache.h"
 
+using namespace std;
+
 /*
  * UNIT TEST
  */
@@ -24,24 +26,21 @@ void basic() {
     Cache::index_type s1 = 2;
     
     // setting
-    
     cache->set(k0, v0, s0);
     cache->set(k1, v1, s1);
-    
-    std::cout << &v0 << "\n" << cache->get(k0, s0);
-            
+                
     // getting
-//    assert (cache->get("a", 1) == "a");
-//    assert (cache->get("b", 2) == "b");
-//    assert (cache->get("c", 3) == "c");
-    
+    cache->get(k0, s0);
+    cache->get(k1, s1);
+        
     // space used
     assert (cache->space_used() == s0 + s1);
     
     // deleting
-    cache->del("a");
-    cache->del("b");
-    cache->del("c");
+    cache->del(k0);
+    cache->del(k1);
     assert (cache->space_used() == 0);
+    
+    cout << "UNIT TEST PASSED\n";
     
 }

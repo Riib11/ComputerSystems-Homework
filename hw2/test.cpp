@@ -1,19 +1,25 @@
 #include <cstdlib>
 #include <cassert>
 #include <iostream>
+#include <exception>
 #include "cache.h"
 
 using namespace std;
 
-/*
- * UNIT TEST
- */
-void unit() {
-    
+void pass(string name) {
+    cout << "[*] PASSED " << name << "\n";
 }
 
+void fail(string name) {
+    cout << "[X] FAILED " << name << "\n";
+}
+
+/*
+ * Component tests
+ */
+
 // test basic cache functions
-void basic() {
+void basic_test() {
     
     Cache* cache = new Cache(6);
     
@@ -41,6 +47,54 @@ void basic() {
     cache->del(k1);
     assert (cache->space_used() == 0);
     
-    cout << "UNIT TEST PASSED\n";
+    pass("basic test");    
+}
+
+// eviction test
+void eviction_test() {
+    Cache* cache = new Cache(2);
     
+    cache->set("a", "a", 1);
+    cache->set("b", "b", 1);
+    cache->set("c", "c", 1);
+    
+    assert (cache->space_used() == 2);
+        
+    cache->get("a", 1);
+    
+    try {
+        cache->get("a", 1);
+        pass("eviction test");
+    } catch(exception e) {
+        fail("eviction test");
+    }
+}
+
+// resizing test
+void resizing_test() {
+    
+    Cache* cache = new Cache(2);
+    
+    cache->set("a", "a", 1);
+    cache->set("b", "b", 1);
+//    cout << "space used = " << cache->space_used() << "\n";
+    assert (cache->space_used() == 2);
+    
+    cache->set("c", "c", 1);
+//    cout << "space used = " << cache->space_used() << "\n";
+    assert (cache->space_used() == 3);
+    
+    pass("resizing test");
+}
+
+
+/*
+ * UNIT TEST
+ */
+void unit_test() {
+    basic_test();
+    // eviction_test();
+    resizing_test();
+    
+    pass("unit test");
 }

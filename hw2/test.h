@@ -1,2 +1,1 @@
-
-void basic();
+void unit_test();

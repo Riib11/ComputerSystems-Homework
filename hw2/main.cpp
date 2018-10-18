@@ -22,7 +22,7 @@ using namespace std;
  */
 int main(int argc, char** argv) {
     
-    basic();
+    unit_test();
     
     return 0;
 }

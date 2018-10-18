@@ -21,32 +21,48 @@ class Cache::Impl {
     hash_func    hasher_;   // key_type -> index_type
     
     std::map<key_type, val_type>
-    memory_; // key => value
+        memory_; // key => value
     std::map<key_type, std::pair<val_type, index_type>>
-    cache_; // key => value, size
+        cache_; // key => value, size
+    
+    bool USING_RESIZING_ = true;
+    index_type RESIZE_THRESHOLD_PERCENT_ = 75;
     
 public:
         
-    Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
-    : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0) {        
 
-    }
+    Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
+    : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
+    {}
     
     void
     del_smallest() {
         // find the key of the smallest value
-        index_type size_min = 0;
         key_type * key_min;
+        index_type size_min = 0;
+        
         for (auto& it : cache_) {
             key_type    key = it.first;
             index_type size = it.second.second;
-            if (size < size_min) {
-                size_min = size;
+            // first iteration
+            if (size_min == 0) {
                 key_min  = &key;
+                size_min = size;
+            }
+            // subsequent iterations
+            else if (size < size_min) {
+                key_min  = &key;
+                size_min = size;
             }
         }
         // delete the smallest value from the cache
         cache_.erase(*key_min);
+        memused_ -= size_min;
+    }
+    
+    void
+    resize_cache() {
+        maxmem_ *= 2;
     }
     
     bool
@@ -56,11 +72,22 @@ public:
     
     void
     set(key_type key, val_type val, index_type size) {
-        // key not already in cache
-        if (!contains(key)) {
-            // cache is full, so need to make room
-            if (memused_ == maxmem_) {
-                del_smallest();
+        // key not already in cache, or the entry in the cache
+        // that will be overwritten is at least as big as the
+        // new entry
+        if (!contains(key) || cache_.at(key).second >= size) {
+            // cache is at least 75% full, so need to resize
+            if (100 * memused_ / maxmem_ >= RESIZE_THRESHOLD_PERCENT_
+                && USING_RESIZING_)
+            {
+                resize_cache();
+            }
+            // if we added this new entry, the cache would be
+            // full, so need to make room
+            else {
+                while (memused_ + size > maxmem_) {
+                    del_smallest();
+                }
             }
             // adding new value will increase memused
             memused_ += size;
@@ -70,12 +97,12 @@ public:
     
     val_type
     get(key_type key, index_type val_size) const {
-        // key not in cache
+        // key is in cache
         if (contains(key)) {
             return cache_.at(key).first;
-        } else {
-            return NULL;
         }
+        // key not in cache
+        return NULL;
     }
     
     void

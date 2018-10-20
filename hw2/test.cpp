@@ -89,7 +89,7 @@ void resizing_test() {
 void unit_test() {
     basic_test();
     // eviction_test();
-    // resizing_test();
+    resizing_test();
     
     pass("unit test");
 }

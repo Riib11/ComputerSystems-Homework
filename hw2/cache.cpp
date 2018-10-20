@@ -25,7 +25,7 @@ class Cache::Impl {
     std::map<key_type, std::pair<val_type, index_type>>
         cache_; // key => value, size
     
-    bool USING_RESIZING_ = true;
+    bool USING_RESIZING_ = false;
     index_type RESIZE_THRESHOLD_PERCENT_ = 75;
     
 public:

@@ -18,8 +18,8 @@ void fail(string name) {
  * Component tests
  */
 
-// test basic cache functions
-void basic_test() {
+// test vanilla cache functions (before part 5)
+void vanilla_test() {
     
     Cache* cache = new Cache(4);
     
@@ -46,7 +46,7 @@ void basic_test() {
     pass("basic test");    
 }
 
-// eviction test
+// eviction test (for any evictor)
 void eviction_test() {
     Cache* cache = new Cache(2);
     
@@ -66,7 +66,7 @@ void eviction_test() {
     }
 }
 
-// resizing test
+// resizing test (part 5)
 // requires: USING_RESIZING_ = true
 void resizing_test() {
     
@@ -88,8 +88,8 @@ void resizing_test() {
  */
 void unit_test() {
     basic_test();
-    // eviction_test();
-    resizing_test();
+     eviction_test();
+//    resizing_test();
     
     pass("unit test");
 }

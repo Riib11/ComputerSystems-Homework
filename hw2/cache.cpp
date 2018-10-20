@@ -1,14 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 #include <cache.h>
 #include <cstdlib>
 #include <unordered_map>
 #include <map>
 #include <iostream>
+#include <vector>
+
+//#include "evictor_fifo.h"
 
 /*
  * CACHE :: IMPLEMENTATION

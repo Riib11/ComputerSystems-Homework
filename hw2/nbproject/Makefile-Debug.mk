@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/cache.o \
+	${OBJECTDIR}/evictor_fifo.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/test.o
 
@@ -68,6 +69,11 @@ ${OBJECTDIR}/cache.o: cache.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I. -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cache.o cache.cpp
+
+${OBJECTDIR}/evictor_fifo.o: evictor_fifo.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I. -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_fifo.o evictor_fifo.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}

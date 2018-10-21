@@ -35,6 +35,8 @@ For the first implementation of the Cache, `vanilla_test` tests that
 - space_used is accurate after deletion
 - eviction evicts the correct entry: the largest-size entry.
 
+For each of the following steps, I also wrote similar tests that can be uncommented in `unit_test` to be run.
+
 ## [3 & 4] Performance and Hash Table
 
 I already used a hash-table (`std::unordered_map`) for my vanilla implementation. I included 

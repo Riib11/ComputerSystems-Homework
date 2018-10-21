@@ -1,27 +1,34 @@
 #include <cstdlib>
 #include <vector>
+#include <memory>
 
-#include "cache.h"
 #include "evictor_fifo.h"
 
 FIFO::FIFO() {
     
 }
 
-void FIFO::push(Cache::key_type key) {
+void FIFO::push(key_type key_const) {
+    std::string key = key_const;
     stack.push_back(key);
 }
 
-Cache::key_type FIFO::get_next() {
+key_type FIFO::get_next() {
     // get last element, remove it, then return it
-    Cache::key_type key = stack.back();
+    key_type key = stack.back();
     stack.pop_back();
     return key;
 }
 
-void FIFO::del(Cache::key_type key) {
-    // erase anything that matches key
-    stack.erase(
-        std::remove(stack.begin(), stack.end(), key),
-        stack.end());
+void FIFO::del(key_type key_const) {
+    std::string key = key_const;
+    std::vector<std::string> stack_new;
+    // filter out everything with the given key
+    for (std::string k : stack) {
+        if (k != key) {
+            stack_new.push_back(k);
+        }
+    }
+    // update stack
+    stack = stack_new;
 }

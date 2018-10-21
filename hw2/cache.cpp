@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-//#include "evictor_fifo.h"
+#include "evictor_fifo.h"
 
 /*
  * CACHE :: IMPLEMENTATION
@@ -22,6 +22,8 @@ class Cache::Impl {
     std::map<key_type, std::pair<val_type, index_type>>
         cache_; // key => value, size
     
+    FIFO * evictor_obj_;
+    
     bool USING_RESIZING_ = false;
     index_type RESIZE_THRESHOLD_PERCENT_ = 75;
     
@@ -30,7 +32,9 @@ public:
 
     Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
     : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
-    {}
+    {
+        evictor_obj_ = new FIFO();
+    }
     
     void
     del_smallest() {
@@ -68,26 +72,34 @@ public:
     }
     
     void
+    check_eviction(index_type size) {
+        // RESIZING
+        // cache is at least 75% full, so need to resize
+        if (100 * memused_ / maxmem_ >= RESIZE_THRESHOLD_PERCENT_
+            && USING_RESIZING_)
+        {
+            resize_cache();
+        }
+        // EVICTION
+        // if we added this new entry, the cache would be
+        // full, so need to make room
+        else {
+            // vanilla eviction
+            while (memused_ + size > maxmem_) {
+                del_smallest();
+            }
+        }
+        // adding new value will increase memused
+        memused_ += size;
+    }
+    
+    void
     set(key_type key, val_type val, index_type size) {
         // key not already in cache, or the entry in the cache
         // that will be overwritten is at least as big as the
         // new entry
         if (!contains(key) || cache_.at(key).second >= size) {
-            // cache is at least 75% full, so need to resize
-            if (100 * memused_ / maxmem_ >= RESIZE_THRESHOLD_PERCENT_
-                && USING_RESIZING_)
-            {
-                resize_cache();
-            }
-            // if we added this new entry, the cache would be
-            // full, so need to make room
-            else {
-                while (memused_ + size > maxmem_) {
-                    del_smallest();
-                }
-            }
-            // adding new value will increase memused
-            memused_ += size;
+            check_eviction(size);
         }
         cache_[key] = std::make_pair(val, size);
     }

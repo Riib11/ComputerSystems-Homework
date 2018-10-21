@@ -2,6 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include <exception>
+
 #include "cache.h"
 
 using namespace std;
@@ -87,7 +88,7 @@ void resizing_test() {
  * UNIT TEST
  */
 void unit_test() {
-    basic_test();
+    vanilla_test();
      eviction_test();
 //    resizing_test();
     

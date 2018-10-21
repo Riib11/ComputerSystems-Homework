@@ -46,10 +46,9 @@ class Cache {
         // from the cache to accomodate the new value.
         void set(key_type key, val_type val, index_type size);
 
-        // Retrieve a pointer to the value associated with key in the cache,
-        // or NULL if not found.
+        // Retrieve a pointer to the value associated with key in the cache
         // Sets the actual size of the returned value (in bytes) in val_size.
-        val_type get(key_type key, index_type val_size) const;
+        val_type get(key_type key, index_type val_size);
 
         // Delete an object from the cache, if it's still there
         void del(key_type key);

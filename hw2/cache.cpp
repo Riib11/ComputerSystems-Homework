@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "evictor_fifo.h"
+#include "evictor_lru.h"
 
 using evictor_obj_type = FIFO;
 
@@ -19,7 +20,7 @@ class Cache::Impl {
     evictor_type evictor_;  // () -> index_type
     hash_func    hasher_;   // key_type -> index_type
     
-    std::unordered_map<std::string, std::pair<val_type, index_type>, hasher_>
+    std::unordered_map<std::string, std::pair<val_type, index_type>>
         cache_; // key => value, size
     
     bool USING_CUSTOM_EVICTION_ = false;
@@ -121,9 +122,10 @@ public:
     }
     
     val_type
-    get(key_type key, index_type val_size) const {
+    get(key_type key, index_type val_size) {
         // key is in cache
         if (contains(key)) {
+            evictor_obj_->visit(key);
             return cache_.at(key).first;
         }
         // key not in cache
@@ -175,7 +177,7 @@ set(key_type key, val_type val, index_type size) {
 }
 
 Cache::val_type Cache::
-get(key_type key, index_type val_size) const {
+get(key_type key, index_type val_size) {
     pImpl_->get(key, val_size);
 }
 

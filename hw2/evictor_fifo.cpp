@@ -11,32 +11,29 @@ FIFO::FIFO() {
 
 void FIFO::push(key_type key_const) {
     std::string key = key_const;
-    stack.insert(stack.begin(), key);
+    queue.insert(queue.begin(), key);
 }
 
 key_type FIFO::evict_next() {
     // get last element, remove it, then return it
-    auto x = stack.size();
-    key_type key = stack.back();
-    stack.pop_back();
-    std::cout << "evicting: " << key << "\n";
+    key_type key = queue.back();
+    queue.pop_back();
     return key;
 }
 
 void FIFO::del(key_type key_const) {
     std::string key = key_const;
-    std::vector<std::string> stack_new;
+    std::vector<std::string> queue_new;
     // filter out everything with the given key
-    for (std::string k : stack) {
+    for (std::string k : queue) {
         if (k != key) {
-            stack_new.push_back(k);
+            queue_new.push_back(k);
         }
     }
-    // update stack
-    stack = stack_new;
+    // update queue
+    queue = queue_new;
 }
 
 void FIFO::visit(key_type key) {
     // FIFO doesn't make use of this, both other evictors might
-}
 }

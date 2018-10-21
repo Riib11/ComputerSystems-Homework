@@ -1,10 +1,13 @@
 # Homework 2
 
+Implementing a Cache.
+
 ## Files
 
 - `test.cpp, test.h`. The unit test for Cache. There are multiple privately-scoped subtests that test different features of Cache for different parts of the homework. To run different subtests, make sure to set the correct options in Cache (hard-coded).
 - `cache.cpp, cache.h`. The Cache class. There are several options for using the Cache, including `USING_RESIZING_` and `USING_CUSTOM_EVICTION_` (which are variables in Cache::Impl), which alter how the Cache will work, and correspondingly which variants in the unit test you should use.
-- `evictor_fifo.cpp, evictor_fifo.h`. The FIFO Evictor for Cache. Can be used by Cache by setting `USING_CUSTOM_EVICTION_ = true`, setting `using_evictor_object_type = FIFO`.
+- `evictor_fifo.cpp, evictor_fifo.h`. The FIFO Evictor for Cache. Can be used by Cache by setting `USING_CUSTOM_EVICTION_ = true` and `using evictor_obj_type = FIFO`.
+- `evictor_lru.cpp, evictor_lru.h`. The LRU Evictor for Cacche. Can be used by Cache by setting `USING_CUSTOM_EVICTION_ = true` and `using evictor_obj_type = LRU`.
 
 ## [1] First Implementation
 
@@ -42,9 +45,14 @@ My vanilla implementation makes this easy. Rather than evict an entry in `Impl::
 
 In `evictor_fifo.cpp, evictor_fifo.h`, I constructed a first-in-first-out evictor for Cache by using a queue-like structure. The evictor implements the following methods, in a generic way so that any evictor could take it's place:
 
-- `push`. Adds 
-- `evict_next`.
-- `del`.
-- `visit`.
+- `push`. Adds a key to the evictor to be tracked.
+- `evict_next`. Returns the key that the Cache should evict next. Removes the key from the evictor's tracking.
+- `del`. Removes a key from the evictor's tracking.
+- `visit`. Marks a key as having been just `get`ed by the Cache.
+
+## [7] LRU Eviction
+
+In 
 
 ## Conclusions
+

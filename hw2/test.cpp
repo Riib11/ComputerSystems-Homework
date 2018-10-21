@@ -21,6 +21,7 @@ void fail(string name) {
 
 // test vanilla cache functions (before part 5)
 // requires: USING_CUSTOM_EVICTION_ = false
+//           USING_RESIZING_        = false
 void vanilla_test() {
     string testname = "vanilla test";
     
@@ -64,6 +65,9 @@ void vanilla_test() {
     }
 }
 
+// test FIFO eviction (part 6)
+// requires: USING_CUSTOM_EVICTION_ = true
+//           eviction_obj_type      = FIFO
 void eviction_FIFO_test() {
     string testname = "eviction FIFO test";
     
@@ -81,8 +85,35 @@ void eviction_FIFO_test() {
         fail(testname);
     } catch (char const* msg) {
         pass(testname);
-    }
+    }    
+}
+
+// test FIFO eviction (part 7)
+// requires: USING_CUSTOM_EVICTION_ = true
+//           eviction_obj_type      = LRU
+void eviction_LRU_test() {
+    string testname = "eviction LRU test";
+
+    Cache * cache = new Cache(3);
     
+    cache->set("a", "a", 1);
+    cache->set("b", "b", 1);
+    cache->set("c", "c", 1);
+    
+    // access the elements in different order
+    cache->get("c", 1);
+    cache->get("a", 1);
+    cache->get("b", 1);
+    
+    // after this add, the evictor should remove "c"
+    cache->set("d", "d", 1);
+    
+    try {
+        cache->get("c", 1);
+        fail(testname);
+    } catch (char const* msg) {
+        pass(testname);
+    }
 }
 
 // resizing test (part 5)
@@ -107,7 +138,8 @@ void resizing_test() {
  */
 void unit_test() {
     cout << "UNIT TEST:\n";
-    vanilla_test();
-    // resizing_test();
-    // eviction_FIFO_test();
+    vanilla_test();          // parts 1-4
+    // resizing_test();         // part 5
+    // eviction_FIFO_test();    // part 6
+    // eviction_LRU_test();     // part 7
 }

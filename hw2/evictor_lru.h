@@ -7,17 +7,17 @@ using val_type = const void*;        // Values for K-V pairs
 using index_type = uint32_t;         // Internal indexing to K-V elements
 
 /*
- * FIFO: first in first out eviction policy
+ * LRU: Least Recently Used eviction policy.
  * 
- * is basically just a modified stack
+ * is basically just a modified queue
  */
-class FIFO {
+class LRU {
     
 private:
-    std::vector<std::string> queue;
+    std::vector<std::string> stack;
     
 public:
-    FIFO();
+    LRU();
     
     // add an item to keep track of
     void push(key_type key);

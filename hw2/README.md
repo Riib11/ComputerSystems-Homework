@@ -1,6 +1,8 @@
 # Homework 2
 
-Implementing a Cache.
+Partners: Henry Blanchette, Noah Koster
+
+Description: Implementing a Cache in C++.
 
 ## Files
 
@@ -52,7 +54,17 @@ In `evictor_fifo.cpp, evictor_fifo.h`, I constructed a first-in-first-out evicto
 
 ## [7] LRU Eviction
 
-In 
+In `evictor_lru.cpp, evictor_lru.h`, I constructed a least-recently-used evictor for Cache by using a stack-like structure. The stack is ordered bottom-to-top by increasingly-recent use. Whenever an entry is `set` or `get` by Cache, it is pushed to the top of the LRU stack. When an entry needs to be evicted, it is pulled from the bottom of the stack. The generic evictor methods are implemented like so:
+
+- `push`. Adds a key to be tracked, pushed on top of stack. Any previous entries with the same key are deleted.
+- `evict_next`. Removes and returns the bottom of the stack.
+- `del`. Removes all instances of a key in the stack.
+- `visit`. Removes all instances of a key in the stack, and pushes the key on the top.
 
 ## Conclusions
 
+This project introduced my to the "Impl" idiomatic structure in C++. It reminds me of private and public classes in JAVA. The use of it is to hide the implementation of a classes methods in a privately-scoped singleton (for each instances of the "wrapper" class). In this project, we used `Cache` as the wrapper class and `Cache::Impl` as the Impl class.
+
+I gained familiarity with some cstdlib objects like `map`, `unordered_map` and `pair`, along with their customizations (such as a custom hash function for `unordered_map`).
+
+This project also made good use of `const` and pointers, which I am still working on a full conceptual grasp of. I think that I can now explain mostly how they work at the low level, but I am still figuring out how programmers should use them conceptually in their designs. `const` seems like a really useful idea, similar to the javascript version.

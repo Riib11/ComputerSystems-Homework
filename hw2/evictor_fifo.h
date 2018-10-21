@@ -22,8 +22,8 @@ public:
     // add an item to keep track of
     void push(key_type key);
     
-    // get next item to evict
-    key_type get_next();
+    // evicts next item from being tracked, at returns it
+    key_type evict_next();
     
     // remove an item being tracked
     void del(key_type key);

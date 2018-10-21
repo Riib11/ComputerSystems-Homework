@@ -22,6 +22,7 @@ class Cache::Impl {
     std::map<key_type, std::pair<val_type, index_type>>
         cache_; // key => value, size
     
+    bool USING_CUSTOM_EVICTION_ = true;
     FIFO * evictor_obj_;
     
     bool USING_RESIZING_ = false;
@@ -74,7 +75,7 @@ public:
     void
     check_eviction(index_type size) {
         // RESIZING
-        // cache is at least 75% full, so need to resize
+        // cache full passed resize threshold, so need to resize
         if (100 * memused_ / maxmem_ >= RESIZE_THRESHOLD_PERCENT_
             && USING_RESIZING_)
         {
@@ -84,9 +85,16 @@ public:
         // if we added this new entry, the cache would be
         // full, so need to make room
         else {
-            // vanilla eviction
             while (memused_ + size > maxmem_) {
-                del_smallest();
+                // custom eviction
+                if (USING_CUSTOM_EVICTION_) {
+                    key_type key_next = evictor_obj_->evict_next();
+                    del(key_next); // remove from cache
+                }
+                // vanilla eviction
+                else {
+                    del_smallest();
+                }
             }
         }
         // adding new value will increase memused
@@ -102,6 +110,9 @@ public:
             check_eviction(size);
         }
         cache_[key] = std::make_pair(val, size);
+        if (USING_CUSTOM_EVICTION_) {
+            evictor_obj_->push(key);
+        }
     }
     
     val_type
@@ -111,7 +122,7 @@ public:
             return cache_.at(key).first;
         }
         // key not in cache
-        return NULL;
+        throw "key not contained in cache!";
     }
     
     void
@@ -122,6 +133,10 @@ public:
             index_type size = it.second;
             cache_.erase(key); // delete from cache
             memused_ -= size;  // decrease memused
+            
+            if (USING_CUSTOM_EVICTION_) {
+                evictor_obj_->del(key);
+            }
         }
     }
     

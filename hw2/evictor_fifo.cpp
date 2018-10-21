@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 #include "evictor_fifo.h"
 
@@ -10,13 +11,15 @@ FIFO::FIFO() {
 
 void FIFO::push(key_type key_const) {
     std::string key = key_const;
-    stack.push_back(key);
+    stack.insert(stack.begin(), key);
 }
 
-key_type FIFO::get_next() {
+key_type FIFO::evict_next() {
     // get last element, remove it, then return it
+    auto x = stack.size();
     key_type key = stack.back();
     stack.pop_back();
+    std::cout << "evicting: " << key << "\n";
     return key;
 }
 

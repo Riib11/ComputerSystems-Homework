@@ -7,6 +7,8 @@
 
 #include "evictor_fifo.h"
 
+using evictor_obj_type = FIFO;
+
 /*
  * CACHE :: IMPLEMENTATION
  */
@@ -17,13 +19,11 @@ class Cache::Impl {
     evictor_type evictor_;  // () -> index_type
     hash_func    hasher_;   // key_type -> index_type
     
-    std::map<key_type, val_type>
-        memory_; // key => value
-    std::map<key_type, std::pair<val_type, index_type>>
+    std::unordered_map<std::string, std::pair<val_type, index_type>>
         cache_; // key => value, size
     
-    bool USING_CUSTOM_EVICTION_ = true;
-    FIFO * evictor_obj_;
+    bool USING_CUSTOM_EVICTION_ = false;
+    evictor_obj_type * evictor_obj_;
     
     bool USING_RESIZING_ = false;
     index_type RESIZE_THRESHOLD_PERCENT_ = 75;
@@ -34,32 +34,32 @@ public:
     Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
     : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
     {
-        evictor_obj_ = new FIFO();
+        evictor_obj_ = new evictor_obj_type();
     }
     
     void
-    del_smallest() {
+    del_largest() {
         // find the key of the smallest value
-        key_type * key_min;
-        index_type size_min = 0;
+        key_type * key_max;
+        index_type size_max = 0;
         
         for (auto& it : cache_) {
             key_type    key = it.first;
             index_type size = it.second.second;
             // first iteration
-            if (size_min == 0) {
-                key_min  = &key;
-                size_min = size;
+            if (size_max == 0) {
+                key_max  = &key;
+                size_max = size;
             }
             // subsequent iterations
-            else if (size < size_min) {
-                key_min  = &key;
-                size_min = size;
+            else if (size > size_max) {
+                key_max  = &key;
+                size_max = size;
             }
         }
         // delete the smallest value from the cache
-        cache_.erase(*key_min);
-        memused_ -= size_min;
+        cache_.erase(*key_max);
+        memused_ -= size_max;
     }
     
     void
@@ -76,10 +76,11 @@ public:
     check_eviction(index_type size) {
         // RESIZING
         // cache full passed resize threshold, so need to resize
-        if (100 * memused_ / maxmem_ >= RESIZE_THRESHOLD_PERCENT_
-            && USING_RESIZING_)
-        {
-            resize_cache();
+        if (USING_RESIZING_) {
+            // resize until fits
+            while (100 * memused_ / maxmem_ >= RESIZE_THRESHOLD_PERCENT_) {
+                resize_cache();
+            }    
         }
         // EVICTION
         // if we added this new entry, the cache would be
@@ -93,7 +94,7 @@ public:
                 }
                 // vanilla eviction
                 else {
-                    del_smallest();
+                    del_largest();
                 }
             }
         }
@@ -103,6 +104,10 @@ public:
     
     void
     set(key_type key, val_type val, index_type size) {
+        // no amount of eviction will work...
+        if (size > maxmem_ && !USING_RESIZING_) {
+            throw "size too big for cache :/";
+        }
         // key not already in cache, or the entry in the cache
         // that will be overwritten is at least as big as the
         // new entry
@@ -122,7 +127,7 @@ public:
             return cache_.at(key).first;
         }
         // key not in cache
-        throw "key not contained in cache!";
+        throw "key not contained in cache >:(";
     }
     
     void
@@ -137,6 +142,8 @@ public:
             if (USING_CUSTOM_EVICTION_) {
                 evictor_obj_->del(key);
             }
+        } else {
+            throw "key not contained in cache >:(";
         }
     }
     

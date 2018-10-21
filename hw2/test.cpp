@@ -27,37 +27,39 @@ void vanilla_test() {
     Cache* cache = new Cache(4);
     
     // setting
-    cache->set("a", "a", 2);
-    cache->set("b", "b", 2);
+    cache->set("a", "a", 3);
+    cache->set("b", "b", 1);
 
     // getting
-    cache->get("a", 2);
-    cache->get("b", 2);
+    cache->get("a", 3);
+    cache->get("b", 1);
         
     // space used
-    assert (cache->space_used() == 2 + 2);
+    assert (cache->space_used() == 3 + 1);
     
-    // eviction
+    // eviction (remove largest)
     cache->set("c", "c", 1);
-    assert (cache->space_used() == 3);
+    assert (cache->space_used() == 2);
     
     // deleting
-    cache->del("a");
+    cache->del("b");
     cache->del("c");
+    cache->space_used();
     assert (cache->space_used() == 0);
         
-    cache = new Cache(2);
+    cache = new Cache(3);
     
-    cache->set("a", "a", 1);
     cache->set("b", "b", 1);
+    cache->set("a", "a", 2);
     cache->set("c", "c", 1);
     
     assert (cache->space_used() == 2);
-            
+    
+    // should have evicted "a"
     try {
-        cache->get("a", 1);
+        cache->get("a", 2);
         pass(testname);
-    } catch (exception e) {
+    } catch (char const* msg) {
         fail(testname);
     }
 }
@@ -104,9 +106,8 @@ void resizing_test() {
  * UNIT TEST
  */
 void unit_test() {
-    // vanilla_test();
+    cout << "UNIT TEST:\n";
+    vanilla_test();
     // resizing_test();
-    eviction_FIFO_test();
-    
-    pass("unit test");
+    // eviction_FIFO_test();
 }

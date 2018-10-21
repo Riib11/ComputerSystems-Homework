@@ -37,6 +37,6 @@ void FIFO::del(key_type key_const) {
 }
 
 void FIFO::visit(key_type key) {
-    // FIFO doesn't make use of this
+    // FIFO doesn't make use of this, both other evictors might
 }
 }

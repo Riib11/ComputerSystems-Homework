@@ -28,4 +28,7 @@ public:
     // remove an item being tracked
     void del(key_type key);
     
+    // mark an entry as visited (not used for FIFO)
+    void visit(key_type key);
+    
 };

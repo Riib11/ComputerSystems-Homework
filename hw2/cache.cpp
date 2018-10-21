@@ -19,7 +19,7 @@ class Cache::Impl {
     evictor_type evictor_;  // () -> index_type
     hash_func    hasher_;   // key_type -> index_type
     
-    std::unordered_map<std::string, std::pair<val_type, index_type>>
+    std::unordered_map<std::string, std::pair<val_type, index_type>, hasher_>
         cache_; // key => value, size
     
     bool USING_CUSTOM_EVICTION_ = false;

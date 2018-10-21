@@ -35,3 +35,8 @@ void FIFO::del(key_type key_const) {
     // update stack
     stack = stack_new;
 }
+
+void FIFO::visit(key_type key) {
+    // FIFO doesn't make use of this
+}
+}

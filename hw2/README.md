@@ -8,7 +8,7 @@
 
 ## [1] First Implementation
 
-For the first implementation (referenced as 'vanilla'), I used an `std::map<val_type, std::pair<val_type, index_type>>` named `cache` in `Cache::Impl` to store the cache's information in the form of a mapping `Key => (Value, Size)`. This setup was intended to work smoothly with the vanilla eviction policy (evict smallest) by storing the value sizes alongside the values.
+For the first implementation (referenced as 'vanilla'), I used an `std::unordered_map<std::string, std::pair<val_type, index_type>>` named `cache` in `Cache::Impl` to store the cache's information in the form of a mapping `Key => (Value, Size)`. I needed to use `std::string` rather than `key_type` because `key_type` is const. This setup was intended to work smoothly with the vanilla eviction policy (evict smallest) by storing the value sizes alongside the values.
 
 Each of the cache methods reference a `Cache::Impl` method that actually completes the operation, providing a private-wrapping hierarchy. Each of these methods work like so:
 
@@ -32,7 +32,7 @@ For the first implementation of the Cache, `vanilla_test` tests that
 
 ## [3 & 4] Performance and Hash Table
 
-I already used a hash-table (`std::map`) for my vanilla implementation.
+I already used a hash-table (`std::unordered_map`) for my vanilla implementation. I included 
 
 ## [5] Dynamic Resizing
 
@@ -40,10 +40,11 @@ My vanilla implementation makes this easy. Rather than evict an entry in `Impl::
 
 ## [6] FIFO Eviction
 
-In `evictor_fifo.cpp, evictor_fifo.h`, I constructed a first-in-first-out evictor for Cache by using a queue-like structure. The evictor implements the following methods:
+In `evictor_fifo.cpp, evictor_fifo.h`, I constructed a first-in-first-out evictor for Cache by using a queue-like structure. The evictor implements the following methods, in a generic way so that any evictor could take it's place:
 
-- `push`. 
+- `push`. Adds 
 - `evict_next`.
 - `del`.
+- `visit`.
 
 ## Conclusions

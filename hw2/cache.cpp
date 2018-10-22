@@ -130,6 +130,7 @@ public:
         }
         // key not in cache
         throw "key not contained in cache >:(";
+        return NULL;
     }
     
     void

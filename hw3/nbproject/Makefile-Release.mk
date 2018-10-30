@@ -39,7 +39,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/evictor_fifo.o \
 	${OBJECTDIR}/evictor_lru.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/test.o
+	${OBJECTDIR}/test.o \
+	${OBJECTDIR}/test_old.o
 
 
 # C Compiler Flags
@@ -90,6 +91,11 @@ ${OBJECTDIR}/test.o: test.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test.o test.cpp
+
+${OBJECTDIR}/test_old.o: test_old.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test_old.o test_old.cpp
 
 # Subprojects
 .build-subprojects:

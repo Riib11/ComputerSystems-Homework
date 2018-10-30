@@ -39,7 +39,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/evictor_fifo.o \
 	${OBJECTDIR}/evictor_lru.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/test.o
+	${OBJECTDIR}/test.o \
+	${OBJECTDIR}/test_old.o
 
 
 # C Compiler Flags
@@ -69,27 +70,32 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw3: ${OBJECTFILES}
 ${OBJECTDIR}/cache.o: cache.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cache.o cache.cpp
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cache.o cache.cpp
 
 ${OBJECTDIR}/evictor_fifo.o: evictor_fifo.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_fifo.o evictor_fifo.cpp
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_fifo.o evictor_fifo.cpp
 
 ${OBJECTDIR}/evictor_lru.o: evictor_lru.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_lru.o evictor_lru.cpp
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_lru.o evictor_lru.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/test.o: test.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test.o test.cpp
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test.o test.cpp
+
+${OBJECTDIR}/test_old.o: test_old.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test_old.o test_old.cpp
 
 # Subprojects
 .build-subprojects:

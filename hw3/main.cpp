@@ -2,15 +2,6 @@
 #include <iostream>
 #include <test.h>
 
-using namespace std;
-
-/*
- * MAIN
- */
-int main(int argc, char** argv) {
-    
-    unit_test();
-    
-    return 0;
-}
+#define CATCH_CONFIG_MAIN
+#include "catch.h"
 

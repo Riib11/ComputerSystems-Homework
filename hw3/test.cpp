@@ -1,145 +1,127 @@
-#include <cstdlib>
-#include <cassert>
-#include <iostream>
-#include <exception>
-
+#include "catch.h"
 #include "cache.h"
+#include <cstdlib>
+#include <iostream>
 
-using namespace std;
-
-void pass(string name) {
-    cout << "[*] PASSED " << name << "\n";
+TEST_CASE("Construction", "[constructor]") {
+    // constructs cache without error
+    Cache* cache = new Cache(10);
 }
 
-void fail(string name) {
-    cout << "[X] FAILED " << name << "\n";
-}
-
-/*
- * Component tests
- */
-
-// test vanilla cache functions (before part 5)
-// requires: USING_CUSTOM_EVICTION_ = false
-//           USING_RESIZING_        = false
-void vanilla_test() {
-    string testname = "vanilla test";
+TEST_CASE("Setting", "[set]") {
+    Cache* cache = new Cache(10);
     
-    Cache* cache = new Cache(4);
-    
-    // setting
-    cache->set("a", "a", 3);
-    cache->set("b", "b", 1);
-
-    // getting
-    cache->get("a", 3);
-    cache->get("b", 1);
-        
-    // space used
-    assert (cache->space_used() == 3 + 1);
-    
-    // eviction (remove largest)
-    cache->set("c", "c", 1);
-    assert (cache->space_used() == 2);
-    
-    // deleting
-    cache->del("b");
-    cache->del("c");
-    cache->space_used();
-    assert (cache->space_used() == 0);
-        
-    cache = new Cache(3);
-    
-    cache->set("b", "b", 1);
-    cache->set("a", "a", 2);
-    cache->set("c", "c", 1);
-    
-    assert (cache->space_used() == 2);
-    
-    // should have evicted "a"
-    try {
-        cache->get("a", 2);
-        pass(testname);
-    } catch (char const* msg) {
-        fail(testname);
-    }
-}
-
-// test FIFO eviction (part 6)
-// requires: USING_CUSTOM_EVICTION_ = true
-//           eviction_obj_type      = FIFO
-void eviction_FIFO_test() {
-    string testname = "eviction FIFO test";
-    
-    Cache * cache = new Cache(3);
-    
-    cache->set("a", "a", 2);
-    cache->set("b", "b", 1);
-    cache->set("c", "c", 1);
-    
-    // should have evicted the "a"
-    // as it was put in first
-        
-    try {
-        cache->get("a", 2);
-        fail(testname);
-    } catch (char const* msg) {
-        pass(testname);
-    }    
-}
-
-// test FIFO eviction (part 7)
-// requires: USING_CUSTOM_EVICTION_ = true
-//           eviction_obj_type      = LRU
-void eviction_LRU_test() {
-    string testname = "eviction LRU test";
-
-    Cache * cache = new Cache(3);
-    
+    // set first key-value-size
     cache->set("a", "a", 1);
-    cache->set("b", "b", 1);
-    cache->set("c", "c", 1);
     
-    // access the elements in different order
-    cache->get("c", 1);
+    // set subsequent key-value-size
+    cache->set("b", "b", 2);
+}
+
+TEST_CASE("Setting and Memory", "[constructor, set, memused]") {
+    Cache* cache = new Cache(10);
+    REQUIRE( cache->space_used() == 0 );
+    
+    // add first value
+    cache->set("a", "a", 1);
+    REQUIRE( cache->space_used() == 1 );
+    
+    // add new value
+    cache->set("b", "b", 1);
+    REQUIRE( cache->space_used() == 2 );
+    
+    // rewrite size of value
+    cache->set("a", "a", 2);
+    REQUIRE( cache->space_used() == 3 );
+}
+
+TEST_CASE("Max Memory Respected", "[constructor, set, memused, memmax]") {
+    Cache* cache = new Cache(10);
+    
+    cache->set("a", "a", 5);
+    cache->set("b", "b", 5);
+    REQUIRE( cache->space_used() == 10 );
+    
+    cache->set("c", "c", 5);
+    REQUIRE( cache->space_used() == 10 );
+}
+
+TEST_CASE("Memory Updated", "[constructor, set, memused]") {
+    Cache* cache = new Cache(10);
+    
+    cache->set("a", "a", 10);
+    
+    // update entry size
+    cache->set("a", "a", 5);
+    REQUIRE( cache->space_used() == 5 );
+    
+    // allows for filling up to memmax
+    // after size update
+    cache->set("b", "b", 5);
+    REQUIRE( cache->space_used() == 10 );
+    
+}
+
+TEST_CASE("Getting", "[constructor, set, get]") {
+    Cache* cache = new Cache(10);
+    
+    // get newly added value
+    cache->set("a", "a", 1);
     cache->get("a", 1);
+    
+    // get previous values
+    cache->set("b", "b", 1);
     cache->get("b", 1);
-    
-    // after this add, the evictor should remove "c"
-    cache->set("d", "d", 1);
-    
-    try {
-        cache->get("c", 1);
-        fail(testname);
-    } catch (char const* msg) {
-        pass(testname);
-    }
+    cache->get("a", 1);
 }
 
-// resizing test (part 5)
-// requires: USING_RESIZING_ = true
-void resizing_test() {
+TEST_CASE("Getting Size", "[constructor, set, get, size]") {
+    Cache* cache = new Cache(10);
     
-    Cache* cache = new Cache(2);
+    // retrieve size appropriately
+    cache->set("a", "a", 1);
+    index_type size;
+    cache->get("a", &size);
+    REQUIRE( size == 1 );
+    
+    // rewrite size appropriately
+    cache->set("a", "b", 4);
+    cache->get("a", &size);
+    REQUIRE( size == 4 );
+    
+}
+
+TEST_CASE("Deleting", "[constructor, set, del]") {
+    Cache* cache = new Cache(10);
     
     cache->set("a", "a", 1);
-    cache->set("b", "b", 1);
-    assert (cache->space_used() == 2);
+    cache->set("b", "b", 4);
     
-    cache->set("c", "c", 1);
-    assert (cache->space_used() == 3);
+    // deleting different values
+    cache->del("a");
+    REQUIRE( cache->get("a", 1) == NULL );
+    cache->del("b");
+    REQUIRE( cache->get("b", 4) == NULL );
     
-    pass("resizing test");
+    // re-add-del a deleted value
+    cache->set("a", "a", 1);
+    cache->del("a");
+    REQUIRE( cache->get("a", 1) == NULL );
 }
 
-
-/*
- * UNIT TEST
- */
-void unit_test() {
-    cout << "UNIT TEST:\n";
-    vanilla_test();          // parts 1-4
-    // resizing_test();         // part 5
-    // eviction_FIFO_test();    // part 6
-    // eviction_LRU_test();     // part 7
+TEST_CASE("Deleting and Memory", "[constructor, set, del, memused]") {
+    Cache* cache = new Cache(10);
+    
+    cache->set("a", "a", 1);
+    cache->set("b", "b", 4);
+    
+    cache->del("a");
+    REQUIRE( cache->space_used() == 4 );
+    cache->del("b");
+    REQUIRE( cache->space_used() == 0 );
+    
+    // re-add-del a deleted value
+    cache->set("a", "a", 1);
+    cache->del("a");
+    REQUIRE( cache->space_used() == 0 );
 }

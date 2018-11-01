@@ -35,8 +35,10 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
     <itemPath>test_descriptions.md</itemPath>
+    <itemPath>testing_henry.txt</itemPath>
     <itemPath>testing_josh.txt</itemPath>
-    <itemPath>testing_monica.txt</itemPath>
+    <itemPath>testing_results.txt</itemPath>
+    <itemPath>testing_sierra.txt</itemPath>
     <itemPath>testing_tanmay.txt</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -76,9 +78,13 @@
       </item>
       <item path="test_descriptions.md" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="testing_henry.txt" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="testing_josh.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="testing_monica.txt" ex="false" tool="3" flavor2="0">
+      <item path="testing_results.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_sierra.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="testing_tanmay.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -125,9 +131,13 @@
       </item>
       <item path="test_descriptions.md" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="testing_henry.txt" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="testing_josh.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="testing_monica.txt" ex="false" tool="3" flavor2="0">
+      <item path="testing_results.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_sierra.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="testing_tanmay.txt" ex="false" tool="3" flavor2="0">
       </item>

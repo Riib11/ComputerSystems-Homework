@@ -1,0 +1,9 @@
+Name; Description; Status;
+Setting; Cache::set executes without error; PASS;
+Setting and Tracking Memory Used; Cache::set correctly updates memused; PASS;
+Evicting; eviction is triggered when adding elements surpasses maxmem; PASS;
+Respecting Max Memory; memused doesn't surpass maxmem; PASS;
+Getting; getting executes without error; PASS;
+Getting Size; getting retrieves the correct entry sizes; FAIL;
+Deleting; Cache::del deletes correctly; FAIL;
+Deleting and Tracking Memory Used; Cache::del updates memused correctly; PASS;

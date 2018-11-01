@@ -1,0 +1,45 @@
+# Part 2: Testing Results
+
+Testing code: https://github.com/Riib11/ComputerSystems-Homework/blob/master/hw3/test.cpp
+Using: Catch2 testing environment
+
+## Group 1
+
+*Linking/Compiling Errors*: Error in compiling: original API was changed - Cache::get was changed from `const` to not-const and parameter `index_value&` was changed tto `index_val`.
+*Test Statuses*:
+Setting                             {Cache::set executes without error}         : PASS.
+Setting and Tracking Memory Used    {Cache::set correctly updates memused}      : PASS.
+Evicting                            {eviction triggers correctly}               : PASS.
+Respecting Max Memory               {memused doesn't surpass maxmem}            : PASS.
+Getting                             {getting executes without error}            : PASS.
+Getting Size                        {getting retrieves the correct entry sizes} : FAIL.
+Deleting                            {Cache::del deletes correctly}              : FAIL.
+Deleting and Tracking Memory Used   {Cache::del updates memused correctly}      : PASS.
+
+## Group 2
+
+*Linking/Compiling Errors*: Linking works perfectly! No compiling errors.
+
+*Test Statuses*:
+Setting                             {Cache::set executes without error}         : PASS.
+Setting and Tracking Memory Used    {Cache::set correctly updates memused}      : PASS.
+Evicting                            {eviction triggers correctly}               : PASS.
+Respecting Max Memory               {memused doesn't surpass maxmem}            : PASS.
+Getting                             {getting executes without error}            : PASS.
+Getting Size                        {getting retrieves the correct entry sizes} : FAIL.
+Deleting                            {Cache::del deletes correctly}              : PASS.
+Deleting and Tracking Memory Used   {Cache::del updates memused correctly}      : PASS.
+
+## Group 3
+
+*Linking/Compiling Errors*: Linking works perfectly! No compiling errors. However, many debugging print statements were left in.
+
+*Test Statuses*:
+Setting                             {Cache::set executes without error}         : PASS.
+Setting and Tracking Memory Used    {Cache::set correctly updates memused}      : FAIL.
+Evicting                            {eviction triggers correctly}               : FAIL.
+Respecting Max Memory               {memused doesn't surpass maxmem}            : PASS.
+Getting                             {getting executes without error}            : PASS.
+Getting Size                        {getting retrieves the correct entry sizes} : PASS.
+Deleting                            {Cache::del deletes correctly}              : PASS.
+Deleting and Tracking Memory Used   {Cache::del updates memused correctly}      : PASS.

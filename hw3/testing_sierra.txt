@@ -1,0 +1,91 @@
+Inserting: Key: a, Value: 0x556e7fb80681
+Inserting: Key: b, Value: 0x556e7fb80683
+Inserting: Key: a, Value: 0x556e7fb80681
+Inserting: Key: b, Value: 0x556e7fb80683
+Inserting: Key: a, Value: 0x556e7fb80681
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hw3 is a Catch v2.4.2 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+Cache with Vanilla Eviction 
+  Setting and Tracking Memory Used
+-------------------------------------------------------------------------------
+test.cpp:23
+...............................................................................
+
+test.cpp:37: FAILED:
+  REQUIRE( cache->space_used() == 3 )
+with expansion:
+  4 == 3
+
+Inserting: Key: a, Value: 0x556e7fb80681
+Key: a successfully deleted.
+-------------------------------------------------------------------------------
+Cache with Vanilla Eviction 
+  Evicting (arbitrary implementation)
+-------------------------------------------------------------------------------
+test.cpp:40
+...............................................................................
+
+test.cpp:40: FAILED:
+due to unexpected exception with message:
+  basic_string::_M_construct null not valid
+
+Inserting: Key: a, Value: 0x556e7fb80681
+Key: a successfully deleted.
+Inserting: Key: b, Value: 0x556e7fb80683
+-------------------------------------------------------------------------------
+Cache with Vanilla Eviction 
+  Respecting Max Memory
+-------------------------------------------------------------------------------
+test.cpp:49
+...............................................................................
+
+test.cpp:54: FAILED:
+  REQUIRE( cache->space_used() == 10 )
+with expansion:
+  5 == 10
+
+-------------------------------------------------------------------------------
+Cache with Vanilla Eviction 
+  Updating Memory Used
+-------------------------------------------------------------------------------
+test.cpp:60
+...............................................................................
+
+test.cpp:60: FAILED:
+due to unexpected exception with message:
+  basic_string::_M_construct null not valid
+
+Inserting: Key: a, Value: 0x556e7fb80681
+Retrieving: Key: a, Value: 0x556e7fb80681
+Inserting: Key: b, Value: 0x556e7fb80683
+Retrieving: Key: b, Value: 0x556e7fb80683
+Retrieving: Key: a, Value: 0x556e7fb80681
+Inserting: Key: a, Value: 0x556e7fb80681
+Retrieving: Key: a, Value: 0x556e7fb80681
+Inserting: Key: a, Value: 0x556e7fb80683
+Retrieving: Key: a, Value: 0x556e7fb80683
+Inserting: Key: a, Value: 0x556e7fb80681
+Inserting: Key: b, Value: 0x556e7fb80683
+Key: a successfully deleted.
+Key: a not found.
+Key: b successfully deleted.
+Key: b not found.
+Inserting: Key: a, Value: 0x556e7fb80681
+Key: a successfully deleted.
+Key: a not found.
+Inserting: Key: a, Value: 0x556e7fb80681
+Inserting: Key: b, Value: 0x556e7fb80683
+Key: a successfully deleted.
+Key: b successfully deleted.
+Inserting: Key: a, Value: 0x556e7fb80681
+Key: a successfully deleted.
+===============================================================================
+test cases:  1 |  0 passed | 1 failed
+assertions: 15 | 11 passed | 4 failed
+
+
+RUN FINISHED; exit value 4; real time: 0ms; user: 0ms; system: 0ms

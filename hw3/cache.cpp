@@ -1,203 +1,193 @@
 #include <cache.h>
+#include <cstdlib>
 #include <unordered_map>
-#include <cstring> //for "std::memcpy" in set
-#include <iostream> //for queue.display
+#include <map>
+#include <iostream>
+#include <vector>
 
-struct node //node for Queue
-{
-	std::string* value;
-	uint32_t size;
-	node *next;
-};
+#include "evictor_fifo.h"
+#include "evictor_lru.h"
 
-class Queue //Queue for evictor
-{
+using evictor_obj_type = FIFO;
+
+/*
+ * CACHE :: IMPLEMENTATION
+ */
+class Cache::Impl {
+
+    index_type   maxmem_;   //
+    index_type   memused_;  // 
+    evictor_type evictor_;  // () -> index_type
+    hash_func    hasher_;   // key_type -> index_type
+    
+    std::unordered_map<std::string, std::pair<val_type, index_type>>
+        cache_; // key => value, size
+    
+    bool USING_CUSTOM_EVICTION_ = false;
+    evictor_obj_type * evictor_obj_;
+    
+    bool USING_RESIZING_ = false;
+    index_type RESIZE_THRESHOLD_PERCENT_ = 75;
+    
 public:
-	node *head;
-	Queue()
-		{head = NULL;}
-	
-	void enqueue(std::string* val, uint32_t sz)
-	{
-		node *temp = new node;
-		temp->value = val;
-		temp->size = sz;
-		temp->next = NULL;
-		if(head == NULL)
-			{head = temp;}
-		else
-		{
-			node *traverse;
-			traverse = head;
-			while(traverse->next != NULL)
-				{traverse = traverse->next;}
-			traverse->next = temp;
-		}
-	}
+        
 
-	uint32_t rem(std::string val)
-	{
-		node *curr;
-		node *prev;
-		curr = head;
-		uint32_t out;
-		while((curr->next != NULL) && (*curr->value != val))
-		{
-			prev = curr;
-			curr = curr->next;
-		}
-		if(*curr->value != val) {return 0;}
-		else if (curr == head)
-		{
-			out = curr->size;
-			head = curr->next;
-			delete curr->value;
-			delete curr;
-			return out;
-		}
-		else
-		{
-			out = curr->size;
-			prev->next = curr->next;
-			delete curr->value;
-			delete curr;
-			return out;
-		}
-	}
-
-	void dequeue()
-	{
-		node *save;
-		save = head;
-		head = save->next;
-		delete save;
-	}
-
-	void display()
-	{
-		node *traverse;
-		traverse = head;
-		while(traverse != NULL)
-		{
-			std::cout << traverse->size << "\t" << traverse->value << "\t" << *traverse->value << std::endl;
-			traverse = traverse->next;
-		}
-		std::cout << std::endl;
-	}
+    Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
+    : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
+    {
+        evictor_obj_ = new evictor_obj_type();
+    }
+    
+    void
+    del_largest() {
+        // find the key of the smallest value
+        key_type * key_max;
+        index_type size_max = 0;
+        
+        for (auto& it : cache_) {
+            key_type    key = it.first;
+            index_type size = it.second.second;
+            // first iteration
+            if (size_max == 0) {
+                key_max  = &key;
+                size_max = size;
+            }
+            // subsequent iterations
+            else if (size > size_max) {
+                key_max  = &key;
+                size_max = size;
+            }
+        }
+        // delete the smallest value from the cache
+        cache_.erase(*key_max);
+        memused_ -= size_max;
+    }
+    
+    void
+    resize_cache() {
+        maxmem_ *= 2;
+    }
+    
+    bool
+    contains(key_type key) const {
+        return cache_.find(key) != cache_.end();
+    }
+    
+    void
+    check_eviction(index_type size) {
+        // RESIZING
+        // cache full passed resize threshold, so need to resize
+        if (USING_RESIZING_) {
+            // resize until fits
+            while (100 * memused_ / maxmem_ >= RESIZE_THRESHOLD_PERCENT_) {
+                resize_cache();
+            }    
+        }
+        // EVICTION
+        // if we added this new entry, the cache would be
+        // full, so need to make room
+        else {
+            while (memused_ + size > maxmem_) {
+                // custom eviction
+                if (USING_CUSTOM_EVICTION_) {
+                    key_type key_next = evictor_obj_->evict_next();
+                    del(key_next); // remove from cache
+                }
+                // vanilla eviction
+                else {
+                    del_largest();
+                }
+            }
+        }
+        // adding new value will increase memused
+        memused_ += size;
+    }
+    
+    void
+    set(key_type key, val_type val, index_type size) {
+        // no amount of eviction will work...
+        if (size > maxmem_ && !USING_RESIZING_) {
+            throw "size too big for cache :/";
+        }
+        // key not already in cache, or the entry in the cache
+        // that will be overwritten is at least as big as the
+        // new entry
+        if (!contains(key) || cache_.at(key).second >= size) {
+            check_eviction(size);
+        }
+        cache_[key] = std::make_pair(val, size);
+        if (USING_CUSTOM_EVICTION_) {
+            evictor_obj_->push(key);
+        }
+    }
+    
+    val_type
+    get(key_type key, index_type val_size) {
+        // key is in cache
+        if (contains(key)) {
+            evictor_obj_->visit(key);
+            return cache_.at(key).first;
+        }
+        // key not in cache
+        throw "key not contained in cache >:(";
+        return NULL;
+    }
+    
+    void
+    del(key_type key) {
+        // if key is in cache
+        if (contains(key)) {
+            auto it = cache_.at(key);
+            index_type size = it.second;
+            cache_.erase(key); // delete from cache
+            memused_ -= size;  // decrease memused
+            
+            if (USING_CUSTOM_EVICTION_) {
+                evictor_obj_->del(key);
+            }
+        } else {
+            throw "key not contained in cache >:(";
+        }
+    }
+    
+    index_type
+    space_used() const {
+        return memused_;
+    }
+    
 };
 
-struct Cache::Impl {
-private:
-	index_type memused_;
-	evictor_type evictor_;
-	hash_func hasher_;
-	index_type maxmem_;
-	std::unordered_map<std::string, void*, hash_func> data_;
-	Queue evictor_queue;
-	
-public:
-	Impl(index_type maxmem, evictor_type evictor, hash_func hasher)
-	 : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0), data_(0, hasher_)
-	{
-		data_.max_load_factor(0.5);
-	}
-
-	~Impl()
-	{
-		for (auto kvpair : data_) //free all ptrs
-		{
-			free(data_[kvpair.first]);
-			evictor_queue.rem(kvpair.first);
-			/*del(kvpair.first);*/
-		}
-	}
-
-	void set(key_type key, val_type val, index_type size)
-	{
-		if(size > maxmem_) {return;}
-		std::string* keyp = new std::string;
-		*keyp = key;
-
-		if(data_[key] != 0)
-		{
-			free(data_[key]);	//free existing ptr if editing
-			uint32_t sz = evictor_queue.rem(key);
-			memused_ -= sz;
-		}
-		void *val_ptr = malloc(size);			//malloc an empty pointer...
-		std::memcpy(val_ptr, val, size);		//and deep-copy to it.
-		data_[key] = val_ptr;					//then store it in data_, and...
-		memused_ += size; 						//increase memused_ by its size
-		evictor_queue.enqueue(keyp, size); 		//enqueue a pointer to key
-
-		while(memused_ > maxmem_)	// if we need to do some eviction...
-		{
-			key_type header = *(evictor_queue.head->value);
-			//std::cout << "evicting key...\t\t" << (header) << std::endl;
-			del(header); //delete the first key in data_
-		}
-	}
-	
-	val_type get(key_type key, index_type& val_size)
-	{
-		if(data_[key] != 0)
-		{
-			return data_[key];
-		}//fetch key if exists.
-		else {data_.erase(key); return NULL;} 	//if key is nonexistent, make sure we don't keep it!
-		//takes key and size of retrieved value
-		//return a pointer to key in array
-	}
-
-	void del(key_type key)
-	{
-		if(data_[key] != 0)
-		{
-			uint32_t sz = evictor_queue.rem(key);
-			memused_ -= sz;	//decrement memuse
-			free(data_[key]);				//free pointer to data
-		}
-		data_.erase(key);				//make data_ forget the key.
-	}
-
-	index_type space_used() const
-	{
-		return memused_;
-	}
-};
-
-// Create a new cache object with a given maximum memory capacity.
-Cache::Cache(index_type maxmem, evictor_type evictor, hash_func hasher)
-: pImpl_(new Impl(maxmem, evictor, hasher))
+// Create a new cache object with a given max memory capacity
+Cache::Cache(
+    index_type maxmem,
+    evictor_type evictor,
+    hash_func hasher)
+    : pImpl_(new Impl(maxmem, evictor, hasher))
 {}
-Cache::~Cache() = default;
 
-// Add a <key, value> pair to the cache.
-// If key already exists, it will overwrite the old value.
-// Both the key and the value are to be deep-copied (not just pointer copied).
-// If maxmem capacity is exceeded, sufficient values will be removed
-// from the cache to accomodate the new value.
-void Cache::set(key_type key, val_type val, index_type size)
-{
-	pImpl_ ->set(key,val,size);
+// Cleanup cache
+Cache::~Cache() {}
+
+/*
+ * Defer function calls to Impl
+ */
+
+void Cache::
+set(key_type key, val_type val, index_type size) {
+    pImpl_->set(key, val, size);
 }
 
-// Retrieve a pointer to the value associated with key in the cache,
-// or NULL if not found.
-// Sets the actual size of the returned value (in bytes) in val_size.
-Cache::val_type Cache::get(key_type key, index_type& val_size) const
-{
-	return pImpl_ ->get(key, val_size);
+Cache::val_type Cache::
+get(key_type key, index_type& val_size) const {
+    pImpl_->get(key, val_size);
 }
 
-// Delete an object from the cache, if it's still there
-void Cache::del(key_type key)
-{
-	pImpl_ ->del(key);
+void Cache::
+del(key_type key) {
+    pImpl_->del(key);
 }
 
-// Compute the total amount of memory used up by all cache values (not keys)
-Cache::index_type Cache::space_used() const
-{
-	return pImpl_ ->space_used();
+Cache::index_type Cache::
+space_used() const {
+    pImpl_->space_used();
 }

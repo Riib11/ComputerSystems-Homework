@@ -57,10 +57,9 @@ void vanilla_test() {
     assert (cache->space_used() == 2);
     
     // should have evicted "a"
-    try {
-        cache->get("a", 2);
+    if (cache->get("a", 2) == NULL) {
         pass(testname);
-    } catch (char const* msg) {
+    } else {
         fail(testname);
     }
 }
@@ -79,13 +78,12 @@ void eviction_FIFO_test() {
     
     // should have evicted the "a"
     // as it was put in first
-        
-    try {
-        cache->get("a", 2);
-        fail(testname);
-    } catch (char const* msg) {
+    
+    if (cache->get("a", 2) == NULL) {
         pass(testname);
-    }    
+    } else {
+        fail(testname);
+    }
 }
 
 // test FIFO eviction (part 7)
@@ -108,11 +106,10 @@ void eviction_LRU_test() {
     // after this add, the evictor should remove "c"
     cache->set("d", "d", 1);
     
-    try {
-        cache->get("c", 1);
-        fail(testname);
-    } catch (char const* msg) {
+    if (cache->get("c", 1) == NULL) {
         pass(testname);
+    } else {
+        fail(testname);
     }
 }
 

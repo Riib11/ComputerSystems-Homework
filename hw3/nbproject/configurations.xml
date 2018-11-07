@@ -9,7 +9,6 @@
       <itemPath>evictor_fifo.h</itemPath>
       <itemPath>evictor_lru.h</itemPath>
       <itemPath>test.h</itemPath>
-      <itemPath>test_old.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -23,7 +22,6 @@
       <itemPath>evictor_lru.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>test.cpp</itemPath>
-      <itemPath>test_old.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -37,6 +35,11 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
     <itemPath>test_descriptions.md</itemPath>
+    <itemPath>testing_henry.txt</itemPath>
+    <itemPath>testing_josh.txt</itemPath>
+    <itemPath>testing_results.txt</itemPath>
+    <itemPath>testing_sierra.txt</itemPath>
+    <itemPath>testing_tanmay.txt</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -75,9 +78,15 @@
       </item>
       <item path="test_descriptions.md" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="test_old.cpp" ex="false" tool="1" flavor2="0">
+      <item path="testing_henry.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="test_old.h" ex="false" tool="3" flavor2="0">
+      <item path="testing_josh.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_results.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_sierra.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_tanmay.txt" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -122,9 +131,15 @@
       </item>
       <item path="test_descriptions.md" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="test_old.cpp" ex="false" tool="1" flavor2="0">
+      <item path="testing_henry.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="test_old.h" ex="false" tool="3" flavor2="0">
+      <item path="testing_josh.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_results.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_sierra.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testing_tanmay.txt" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

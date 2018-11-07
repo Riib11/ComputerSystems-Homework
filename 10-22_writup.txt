@@ -1,0 +1,10 @@
+If I were to implement Memcached from scratch, I would focus on the following design choices (in order of priority)
+
+1. Distributed network optimization
+This would help my Memcached implementation work the best on an international scale. Like Memcached implementations today tend to work, they allow there to be automatic caching of data in the regions close to where they are being commonly accessed.
+
+2. Demand-filled cache
+It is best to cut out the middleman that handles misses, and make sure that I have all the information possible about memory retrieval so that I cache in multiple layers and be the most efficient in distribution of resources.
+
+3. Adjustment for temporal patterns
+Rather than set expected patterns of retrival usage in hard-code, I would implement a way that the network can learn (or be configured) to react to expected temporal patters of memory access. For example, when a pattern of retrieval is identified to be a "stream", then can keep close things in cache. If a pattern of retrieval is identified to be an "update", then can get rid of data right after being retrieved.

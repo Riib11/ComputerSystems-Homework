@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
-CND_ARTIFACT_NAME_Debug=hw4
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/hw4
+CND_ARTIFACT_NAME_Debug=hw4_server
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/hw4_server
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
-CND_PACKAGE_NAME_Debug=hw4.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/hw4.tar
+CND_PACKAGE_NAME_Debug=hw4server.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/hw4server.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux
-CND_ARTIFACT_NAME_Release=hw4
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/hw4
+CND_ARTIFACT_NAME_Release=hw4_server
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/hw4_server
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
-CND_PACKAGE_NAME_Release=hw4.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/hw4.tar
+CND_PACKAGE_NAME_Release=hw4server.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/hw4server.tar
 #
 # include compiler specific variables
 #

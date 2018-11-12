@@ -15,6 +15,10 @@
 using namespace std;
 using namespace Pistache;
 
+#include <json.h>
+using json = nlohmann::json;
+
+
 struct PrintException {
 
     void operator()(std::exception_ptr exc) const {

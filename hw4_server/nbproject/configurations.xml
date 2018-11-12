@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>json.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -54,6 +55,8 @@
       </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="json.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="server.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="server_example.cpp" ex="false" tool="1" flavor2="0">
@@ -84,6 +87,8 @@
       <item path="README.md" ex="false" tool="3" flavor2="0">
       </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="json.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="server.cpp" ex="false" tool="1" flavor2="0">
       </item>

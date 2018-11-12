@@ -1,0 +1,13 @@
+
+
+            // get key
+            if (length >= 2 && reslist[1] == "key") {
+                string key = reslist[2];
+                msg += "\nlooking for key " + key;
+            // get memsize
+            } else if (length >= 1 && reslist[2] == "memsize") {
+                msg += "\ngetting memsize";
+            // invalid get
+            } else {
+                msg += "\ninvalid get command";
+            }

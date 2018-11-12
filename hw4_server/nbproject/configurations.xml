@@ -12,7 +12,8 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>start_server.cpp</itemPath>
+      <itemPath>server.cpp</itemPath>
+      <itemPath>server_example.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -25,6 +26,9 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>README.md</itemPath>
+    <itemPath>index.html</itemPath>
+    <itemPath>tmp</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -46,7 +50,15 @@
           <commandLine>-l pistache</commandLine>
         </linkerTool>
       </compileType>
-      <item path="start_server.cpp" ex="false" tool="1" flavor2="0">
+      <item path="README.md" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="index.html" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="server.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="server_example.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tmp" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -69,7 +81,15 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="start_server.cpp" ex="false" tool="1" flavor2="0">
+      <item path="README.md" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="index.html" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="server.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="server_example.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tmp" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

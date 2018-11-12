@@ -13,7 +13,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>start_client.cpp</itemPath>
+      <itemPath>client_example.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -52,7 +52,7 @@
       </compileType>
       <item path="cache.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="start_client.cpp" ex="false" tool="1" flavor2="0">
+      <item path="client_example.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -77,7 +77,7 @@
       </compileType>
       <item path="cache.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="start_client.cpp" ex="false" tool="1" flavor2="0">
+      <item path="client_example.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>

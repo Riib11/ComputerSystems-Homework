@@ -142,10 +142,15 @@ class MyHandler : public Http::Handler {
                     std::cout << "Sent " << bytes << " bytes" << std::endl;
                 }, Async::NoExcept);
             }
+        } else if (req.resource() == "/index") {
+            if (req.method() == Http::Method::Get) {
+                Http::serveFile(response, "index.html").then([](ssize_t bytes) {
+                    std::cout << "Sent " << bytes << " bytes" << std::endl;
+                }, Async::NoExcept);
+            }
         } else {
             response.send(Http::Code::Not_Found);
         }
-
     }
 
     void onTimeout(
@@ -159,32 +164,32 @@ class MyHandler : public Http::Handler {
 
 };
 
-int main(int argc, char *argv[]) {
-    Port port(9080);
-
-    int thr = 2;
-
-    if (argc >= 2) {
-        port = std::stol(argv[1]);
-
-        if (argc == 3)
-            thr = std::stol(argv[2]);
-    }
-
-    Address addr(Ipv4::any(), port);
-
-    cout << "Cores = " << hardware_concurrency() << endl;
-    cout << "Using " << thr << " threads" << endl;
-
-    auto server = std::make_shared<Http::Endpoint>(addr);
-
-    auto opts = Http::Endpoint::options()
-        .threads(thr)
-        .flags(Tcp::Options::InstallSignalHandler);
-    server->init(opts);
-    server->setHandler(Http::make_handler<MyHandler>());
-    server->serve();
-
-    std::cout << "Shutdowning server" << std::endl;
-    server->shutdown();
-}
+//int main(int argc, char *argv[]) {
+//    Port port(9080);
+//
+//    int thr = 2;
+//
+//    if (argc >= 2) {
+//        port = std::stol(argv[1]);
+//
+//        if (argc == 3)
+//            thr = std::stol(argv[2]);
+//    }
+//
+//    Address addr(Ipv4::any(), port);
+//
+//    cout << "Cores = " << hardware_concurrency() << endl;
+//    cout << "Using " << thr << " threads" << endl;
+//
+//    auto server = std::make_shared<Http::Endpoint>(addr);
+//
+//    auto opts = Http::Endpoint::options()
+//        .threads(thr)
+//        .flags(Tcp::Options::InstallSignalHandler);
+//    server->init(opts);
+//    server->setHandler(Http::make_handler<MyHandler>());
+//    server->serve();
+//
+//    std::cout << "Shutdowning server" << std::endl;
+//    server->shutdown();
+//}

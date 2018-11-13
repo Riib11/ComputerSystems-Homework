@@ -1,8 +1,5 @@
-/* 
-   Mathieu Stefani, 07 février 2016
-   
- * Http client example
- */
+#include <unistd.h>
+#include <getopt.h>
 
 #include <atomic>
 
@@ -17,55 +14,72 @@ using namespace Pistache::Http;
 using json = nlohmann::json;
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        std::cerr << "Usage: http_client page [count]" << std::endl;
-        return 1;
+    
+    // parse command line options
+    int opt;
+    std::string address, command, key, value;
+    while((opt = getopt(argc, argv, "a:c:k:v:")) != -1) {
+        switch(opt) {
+            // server address
+            case 'a':
+                address = optarg;
+                break;
+            case 'c':
+                command = optarg;
+                break;
+            case 'k':
+                key = optarg;
+                break;
+            case 'v':
+                value = optarg;
+                break;
+            default:
+                std::cout << "unrecognized command line argument: " << opt << std::endl;
+                exit(EXIT_FAILURE);
+        }
     }
-
-    std::string page = argv[1];
-    int count = 1;
-    if (argc == 3) {
-        count = std::stoi(argv[2]);
-    }
-
+    
+    // debug command line parse
+    std::cout
+            << std::endl
+            << "-----------------------"    << std::endl
+            <<  "address: " << address      << std::endl
+            <<  "command: " << command      << std::endl
+            <<      "key: " << key          << std::endl
+            <<    "value: " << value        << std::endl
+            << "-------------------------"  << std::endl;
+    
+    exit(0);
+            
+    // declare client
     Http::Client client;
+    Http::RequestBuilder response;
 
+    // Http client options
     auto opts = Http::Client::options()
             .threads(1)
             .maxConnectionsPerHost(8);
     client.init(opts);
-
-    std::vector<Async::Promise < Http::Response>> responses;
-
-    std::atomic<size_t> completedRequests(0);
-    std::atomic<size_t> failedRequests(0);
-
-    auto start = std::chrono::system_clock::now();
-
-    for (int i = 0; i < count; ++i) {
-        auto resp = client.get(page).cookie(Http::Cookie("FOO", "bar")).send();
-        resp.then([&](Http::Response response) {
-            ++completedRequests;
-            std::cout << "Response code = " << response.code() << std::endl;
-            auto body = response.body();
-            if (!body.empty())
-                    std::cout << "Response body = " << body << std::endl;
-            }, Async::IgnoreException);
-        responses.push_back(std::move(resp));
+    
+    // send request
+    if (command == "get") {
+        response = client.get(address + "/key/" + key).cookie(Http::Cookie("FOO", "bar")).send();
+    } else if (command = "memsize") {
+        response = client.get(address + "/" + memsize);
+    } else {
+        std::cout << "unrecognized command: " << command << std::endl;
+        exit(EXIT_FAILURE);
     }
-
-    auto sync = Async::whenAll(responses.begin(), responses.end());
-    Async::Barrier<std::vector < Http::Response >> barrier(sync);
-
-    barrier.wait_for(std::chrono::seconds(5));
-
-    auto end = std::chrono::system_clock::now();
-    std::cout << "Summary of execution" << std::endl
-            << "Total number of requests sent     : " << count << std::endl
-            << "Total number of responses received: " << completedRequests.load() << std::endl
-            << "Total number of requests failed   : " << failedRequests.load() << std::endl
-            << "Total time of execution           : "
-            << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
-
+    
+    // report response
+    response.then([&](Http::Response response) {
+        std::cout << "Response code = " << response.code() << std::endl;
+        auto body = response.body();
+        if (!body.empty()) {
+            std::cout << "Response body = " << body << std::endl;
+        }
+    }, Async::IgnoreException);
+    
+    // shutdown client
     client.shutdown();
 }

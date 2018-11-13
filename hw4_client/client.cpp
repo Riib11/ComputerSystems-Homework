@@ -26,65 +26,41 @@ void error_missing_arg(std::string args) {
     exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[]) {
-    
-    // command words
-    std::string
-            cmd_get      = "get",
-            cmd_memsize  = "memsize",
-            cmd_set      = "set",
-            cmd_del      = "delete",
-            cmd_head     = "head",
-            cmd_shutdown = "shutdown";
-    
-    // parse command line options
-    int opt;
-    std::string address = "", command = "", key = "", value = "";
-    while((opt = getopt(argc, argv, "a:c:k:v:")) != -1) {
-        switch(opt) {
-            // server address
-            case 'a':
-                address = optarg;
-                break;
-            case 'c':
-                command = optarg;
-                break;
-            case 'k':
-                key = optarg;
-                break;
-            case 'v':
-                value = optarg;
-                break;
-            default:
-                std::cout << "unrecognized command line argument: " << opt << std::endl;
-                exit(EXIT_FAILURE);
-        }
-    }
-    
-    // debug command line parse
-    std::cout
-            << "-----------------------"    << std::endl
-            <<  "address: " << address      << std::endl
-            <<  "command: " << command      << std::endl
-            <<      "key: " << key          << std::endl
-            <<    "value: " << value        << std::endl
-            << "-------------------------"  << std::endl;
-    
-    
-    if (address == "") { error_missing_arg("address"); }
-    if (command == "") { error_missing_arg("command"); }
-    
-    // declare client
-    Http::Client client;
+Http::Client client;
+std::string address;
 
+void client_start(std::string address_) {
+    address = address_;
     // Http client options
     auto opts = Http::Client::options()
             .threads(1)
             .maxConnectionsPerHost(8);
     client.init(opts);
+}
+
+void client_stop() {
+    client.shutdown();
+}
+
+std::string
+client_request(
+    std::string command,
+    std::string key,
+    std::string value
+) {
+    if (command == "") { error_missing_arg("command"); }
+    
+    std::string
+        cmd_get      = "get",
+        cmd_set      = "set",
+        cmd_memsize  = "memsize",
+        cmd_del      = "del",
+        cmd_head     = "head",
+        cmd_shutdown = "shutdown";
     
     // create resource
     std::string resource;
+    
     // get (key)
     if (command == cmd_get) {
         if (key == "") { error_missing_arg("key"); }
@@ -121,45 +97,51 @@ int main(int argc, char *argv[]) {
     
     std::cout << "resource: " << resource << std::endl;
     
-    // send request
+    // store response
     Http::Cookie cookie = Http::Cookie("Tracker", "tracking");
     std::vector<Async::Promise<Http::Response>> responses;
+    std::string response_body = ((json) {{"success", false}}).dump();
+    
     // GET
     if (command == cmd_get || command == cmd_memsize) {
         auto response = client.get(resource).cookie(cookie).send();
-        response.then([&](Http::Response response) { report(response); }, Async::IgnoreException);
+        response.then([&](Http::Response response) {
+            response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
     // PUT
     else if (command == cmd_set) {
         auto response = client.put(resource).cookie(cookie).send();
-        response.then([&](Http::Response response) { report(response); }, Async::IgnoreException);
+        response.then([&](Http::Response response) {
+            response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
     // DEL
     else if (command == cmd_del) {
         auto response = client.put(resource).cookie(cookie).send();
-        response.then([&](Http::Response response) { report(response); }, Async::IgnoreException);
+        response.then([&](Http::Response response) {
+            response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
     // HEAD
     else if (command == cmd_head) {
         auto response = client.get(resource).cookie(cookie).send();
-        response.then([&](Http::Response response) { report(response); }, Async::IgnoreException);
+        response.then([&](Http::Response response) {
+            response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
     // POST
     else if (command == cmd_shutdown) {
         auto response = client.post(resource).cookie(cookie).send();
-        response.then([&](Http::Response response) { report(response); }, Async::IgnoreException);
+        response.then([&](Http::Response response) {
+            response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
     
     // wait for response
     auto sync = Async::whenAll(responses.begin(), responses.end());
     Async::Barrier<std::vector<Http::Response>> barrier(sync);
-    barrier.wait_for(std::chrono::seconds(5));
+    barrier.wait_for(std::chrono::seconds(2));
     
-    // shutdown client
-    client.shutdown();
+    return response_body;
 }

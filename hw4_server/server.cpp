@@ -16,9 +16,6 @@
 using namespace std;
 using namespace Pistache;
 
-#include <unistd.h>
-#include <getopt.h>
-
 #include <json.h>
 using json = nlohmann::json;
 
@@ -169,7 +166,7 @@ class Handler : public Http::Handler {
             else if (length >= 1 && reslist[1] == "head") {
                 // HEAD
                 data["Version"]         = "1.1";
-                data["Date"]            = to_string(chrono::system_clock::now());
+                // data["Date"]            = to_string(chrono::system_clock::now());
                 data["Accept"]          = "text/plain";
                 data["Content-Type"]    = "application/json";
                 data["success"] = true;
@@ -252,28 +249,7 @@ class Handler : public Http::Handler {
 
 };
 
-int main(int argc, char *argv[]) {
-
-    // default arguments
-    Cache::index_type maxmem = 100;
-    int portnum = 8080;
-    
-    // process command line arguments
-    int opt;
-    while((opt = getopt(argc, argv, "m:t:")) != -1) {
-        switch(opt) {
-            case 'm':
-                maxmem = atoi(optarg);
-                break;
-            case 't':
-                portnum = atoi(optarg);
-                break;
-            default:
-                cout << "unrecognized command line argument: " << opt << endl;
-                exit(EXIT_FAILURE);
-        }
-    }
-    
+void server_start(int portnum, int maxmem) {
     // register CacheProtocol header
     // TODO
     // Http::Header::Registry::registerHeader<CacheHeader>();
@@ -284,7 +260,7 @@ int main(int argc, char *argv[]) {
     server = make_shared<Http::Endpoint>(addr);
     auto opts = Http::Endpoint::options().threads(1).flags(Tcp::Options::InstallSignalHandler);
     server->init(opts);
-    
+        
     // setup cache
     cache = new Cache(maxmem);
     cout << "creating cache with " << maxmem << " space" << endl;
@@ -298,3 +274,4 @@ int main(int argc, char *argv[]) {
     cout << "Shutdowning server" << endl;
     server->shutdown();
 }
+

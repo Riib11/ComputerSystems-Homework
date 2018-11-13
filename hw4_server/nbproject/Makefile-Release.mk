@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/cache.o \
 	${OBJECTDIR}/evictor_fifo.o \
 	${OBJECTDIR}/evictor_lru.o \
+	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/server.o \
 	${OBJECTDIR}/server_example.o
 
@@ -80,6 +81,11 @@ ${OBJECTDIR}/evictor_lru.o: evictor_lru.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_lru.o evictor_lru.cpp
+
+${OBJECTDIR}/main.o: main.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/server.o: server.cpp
 	${MKDIR} -p ${OBJECTDIR}

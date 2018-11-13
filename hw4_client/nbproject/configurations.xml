@@ -5,6 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>cache.h</itemPath>
+      <itemPath>client.h</itemPath>
       <itemPath>json.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -16,6 +17,7 @@
                    projectFiles="true">
       <itemPath>client.cpp</itemPath>
       <itemPath>client_example.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -56,9 +58,13 @@
       </item>
       <item path="client.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="client.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="client_example.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="json.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -85,9 +91,13 @@
       </item>
       <item path="client.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="client.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="client_example.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="json.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>

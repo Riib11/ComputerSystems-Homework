@@ -35,6 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/cache.o \
+	${OBJECTDIR}/evictor_fifo.o \
+	${OBJECTDIR}/evictor_lru.o \
 	${OBJECTDIR}/server.o \
 	${OBJECTDIR}/server_example.o
 
@@ -62,6 +65,21 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw4_server: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw4_server ${OBJECTFILES} ${LDLIBSOPTIONS} -l pistache
+
+${OBJECTDIR}/cache.o: cache.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Ipistache -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cache.o cache.cpp
+
+${OBJECTDIR}/evictor_fifo.o: evictor_fifo.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Ipistache -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_fifo.o evictor_fifo.cpp
+
+${OBJECTDIR}/evictor_lru.o: evictor_lru.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Ipistache -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/evictor_lru.o evictor_lru.cpp
 
 ${OBJECTDIR}/server.o: server.cpp
 	${MKDIR} -p ${OBJECTDIR}

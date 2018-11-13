@@ -11,13 +11,20 @@
 #include <pistache/http_headers.h>
 #include <pistache/cookie.h>
 #include <pistache/endpoint.h>
+#include "cache.h"
 
 using namespace std;
 using namespace Pistache;
 
+#include <unistd.h>
+#include <getopt.h>
+
 #include <json.h>
 using json = nlohmann::json;
 
+std::shared_ptr<Http::Endpoint> server;
+
+Cache::Cache * cache;
 
 struct PrintException {
 
@@ -97,7 +104,7 @@ vector<string> split(string str, char splitter) {
 
 class Handler : public Http::Handler {
 
-    HTTP_PROTOTYPE(Handler)
+    HTTP_PROTOTYPE(Handler);
 
     void onRequest(
             const Http::Request& req,
@@ -108,26 +115,35 @@ class Handler : public Http::Handler {
         string res = req.resource();
         auto reslist = split(res, '/');
         auto length = reslist.size() - 1;
+        
+        std::cout << "resource: " << res << std::endl;
 
         // GET
         if (req.method() == Method::Get) {
-            string msg;
+            string body;
             
-            // get key
+            // get (key)
             if (length >= 2 && reslist[1] == "key") {
-                // TODO
-                msg += "get key: " + reslist[2];
-                response.send(Code::Ok, msg);
-            // get memsize
-            } else if (length >= 1 && reslist[1] == "memsize") {
-                // TODO
-                msg += "get memsize";
-                response.send(Code::Ok, msg);
+                json data;
+                Cache::key_type key = reslist[2];
+                Cache::index_type val_size;
+                data["key"] = key;
+                data["value"] = cache->get(key, val_size);
+                body = data.dump();
+                
+                response.send(Code::Ok, body);
+            }
+            // memsize
+            else if (length >= 1 && reslist[1] == "memsize") {
+                json data;
+                data["memused"] = cache->space_used();
+                body = data.dump();
+                
+                response.send(Code::Ok, body);
+            }
             // invalid
-            } else {
-                // TODO
-                msg += "invalid GET";
-                response.send(Code::Bad_Request, msg);
+            else {
+                response.send(Code::Bad_Request, body);
             }
         }
         // PUT
@@ -138,11 +154,14 @@ class Handler : public Http::Handler {
             if (length >= 3 && reslist[1] == "key") {
                 // TODO
                 msg += "set key to value: " + reslist[2] + " = " + reslist[3];
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Ok, msg);
+            }
             // invalid
-            } else {
+            else {
                 // TODO
                 msg += "invalid PUT";
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Bad_Request, msg);
             }
         
@@ -155,10 +174,12 @@ class Handler : public Http::Handler {
             if (length >= 2 && reslist[1] == "key") {
                 // TODO
                 msg += "delete key: " + reslist[2];
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Ok, msg);
             // invalid
             } else {
                 msg += "invalid DELETE";
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Bad_Request, msg);
             }
         }
@@ -169,10 +190,13 @@ class Handler : public Http::Handler {
             if (length >= 2 && reslist[1] == "key") {
                 // TODO
                 msg += "header for key: " + reslist[2];
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Ok, msg);
+            }
             // invalid
-            } else {
+            else {
                 msg += "invalid HEAD";
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Bad_Request, msg);
             }
         }
@@ -183,10 +207,14 @@ class Handler : public Http::Handler {
             if (length >= 1 && reslist[1] == "shutdown") {
                 // TODO
                 msg += "clean up and shut down";
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Ok, msg);
+                server->shutdown();
+                exit(EXIT_SUCCESS);
             } else {
                 // TODO
                 msg += "invalid POST";
+                cout << "msg: " << msg << std::endl;
                 response.send(Code::Bad_Request, msg);
             }
         }
@@ -194,6 +222,7 @@ class Handler : public Http::Handler {
         else {
             string msg;
             msg += "unsupported HTTP command";
+            cout << "msg: " << msg << std::endl;
             response.send(Code::Bad_Request, msg);
         }
     }
@@ -201,8 +230,8 @@ class Handler : public Http::Handler {
     void onTimeout(
             const Http::Request& req,
             Http::ResponseWriter response) override {
-        UNUSED(req);
-        response
+            UNUSED(req);
+            response
                 .send(Http::Code::Request_Timeout, "Timeout")
                 .then([ = ](ssize_t){}, PrintException());
     }
@@ -210,31 +239,42 @@ class Handler : public Http::Handler {
 };
 
 int main(int argc, char *argv[]) {
-    Port port(9080);
 
-    int thr = 2;
-
-    if (argc >= 2) {
-        port = std::stol(argv[1]);
-
-        if (argc == 3)
-            thr = std::stol(argv[2]);
+    // default arguments
+    Cache::index_type maxmem = 100;
+    int portnum = 8080;
+    
+    // process command line arguments
+    int opt;
+    while((opt = getopt(argc, argv, "m:t:")) != -1) {
+        switch(opt) {
+            case 'm':
+                maxmem = std::atoi(optarg);
+                break;
+            case 't':
+                port = std::atoi(aptarg);
+                break;
+            default:
+                std::cout << "unrecognized command line argument: " << opt << std::endl;
+                exit(EXIT_FAILURE);
+        }
     }
-
+    
+    // setup server
+    Port port(portnum);
     Address addr(Ipv4::any(), port);
-
-    cout << "Cores = " << hardware_concurrency() << endl;
-    cout << "Using " << thr << " threads" << endl;
-
-    auto server = std::make_shared<Http::Endpoint>(addr);
-
-    auto opts = Http::Endpoint::options()
-            .threads(thr)
-            .flags(Tcp::Options::InstallSignalHandler);
+    server = std::make_shared<Http::Endpoint>(addr);
+    auto opts = Http::Endpoint::options().threads(1).flags(Tcp::Options::InstallSignalHandler);
     server->init(opts);
+    
+    // setup cache
+    cache = new Cache(maxmem);
+    
+    // start server
     server->setHandler(Http::make_handler<Handler>());
     server->serve();
 
+    // shutdown server
     std::cout << "Shutdowning server" << std::endl;
     server->shutdown();
 }

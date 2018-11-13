@@ -4,6 +4,9 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>cache.h</itemPath>
+      <itemPath>evictor_fifo.h</itemPath>
+      <itemPath>evictor_lru.h</itemPath>
       <itemPath>json.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -13,6 +16,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>cache.cpp</itemPath>
+      <itemPath>evictor_fifo.cpp</itemPath>
+      <itemPath>evictor_lru.cpp</itemPath>
       <itemPath>server.cpp</itemPath>
       <itemPath>server_example.cpp</itemPath>
     </logicalFolder>
@@ -53,6 +59,18 @@
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cache.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="cache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="evictor_fifo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="evictor_fifo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="evictor_lru.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="evictor_lru.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>
       <item path="json.h" ex="false" tool="3" flavor2="0">
@@ -85,6 +103,18 @@
         </asmTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cache.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="cache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="evictor_fifo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="evictor_fifo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="evictor_lru.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="evictor_lru.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="index.html" ex="false" tool="3" flavor2="0">
       </item>

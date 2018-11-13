@@ -165,6 +165,16 @@ class Handler : public Http::Handler {
                 data["memused"] = cache->space_used();
                 data["success"] = true;
             }
+            // head
+            else if (length >= 1 && reslist[1] == "head") {
+                // HEAD
+                data["Version"]         = "1.1";
+                data["Date"]            = to_string(chrono::system_clock::now());
+                data["Accept"]          = "text/plain";
+                data["Content-Type"]    = "application/json";
+                data["success"] = true;
+            }
+            
             // invalid
             else {
                 response.send(Code::Bad_Request, data.dump());
@@ -176,13 +186,12 @@ class Handler : public Http::Handler {
         else if (req.method() == Method::Put) {            
             // set key value
             if (length >= 3 && reslist[1] == "key") {
-                // parse input
+                // interpret input
                 Cache::key_type key = reslist[2];
-                
-                string val_s = reslist[3];
+                // create new cache entry
+                // TODO
+                // Cache::val_type val = (string) reslist[3];
                 Cache::val_type val = "s";
-                
-//                Cache::val_type val = (string) reslist[3];
                 Cache::index_type size = reslist[3].size(); // size(char) = 1
                 // set key->val in cache
                 cache->set(key, val, size);
@@ -203,31 +212,6 @@ class Handler : public Http::Handler {
                 data["success"] = true;
             // invalid
             } else {
-                response.send(Code::Bad_Request, data.dump());
-                return;
-            }
-        }
-        
-        // HEAD
-        else if (req.method() == Method::Head) {
-            // head
-            if (length >= 2 && reslist[1] == "key") {
-                // create header and add to response
-                /*
-                CacheHeader * header = new CacheHeader();
-                header->parse(((json) {
-                    {"Version"      , "1.1"},
-                    {"Date"         , to_string(chrono::system_clock::now())},
-                    {"Accept"       , "text/plain"},
-                    {"Content-Type" , "application/json"}
-                }).dump());
-                response.headers().add(header);
-                */
-                data["success"] = true;
-                
-            }
-            // invalid
-            else {
                 response.send(Code::Bad_Request, data.dump());
                 return;
             }

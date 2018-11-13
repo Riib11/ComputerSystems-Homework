@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
     }
     // head
     else if (command == cmd_head) {
-        resource = address + "/key/k";
+        resource = address + "/head";
     }
     // shutdown
     else if (command == cmd_shutdown) {
@@ -144,7 +144,6 @@ int main(int argc, char *argv[]) {
     }
     // HEAD
     else if (command == cmd_head) {
-        // TODO
         auto response = client.get(resource).cookie(cookie).send();
         response.then([&](Http::Response response) { report(response); }, Async::IgnoreException);
         responses.push_back(std::move(response));

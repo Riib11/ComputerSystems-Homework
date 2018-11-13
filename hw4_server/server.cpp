@@ -22,35 +22,58 @@ using namespace Pistache;
 #include <json.h>
 using json = nlohmann::json;
 
-std::shared_ptr<Http::Endpoint> server;
+shared_ptr<Http::Endpoint> server;
 
-Cache::Cache * cache;
+Cache * cache;
 
 struct PrintException {
 
-    void operator()(std::exception_ptr exc) const {
+    void operator()(exception_ptr exc) const {
         try {
-            std::rethrow_exception(exc);
-        } catch (const std::exception& e) {
-            std::cerr << "An exception occured: " << e.what() << std::endl;
+            rethrow_exception(exc);
+        } catch (const exception& e) {
+            cerr << "An exception occured: " << e.what() << endl;
         }
     }
 };
 
-struct LoadMonitor {
+// TODO
+/*
+class CacheHeader : public Http::Header {
+public:
 
-    LoadMonitor(const std::shared_ptr<Http::Endpoint>& endpoint)
-    : endpoint_(endpoint)
-    , interval(std::chrono::seconds(1)) {
+    NAME("Cache-Header")
+
+    CacheHeader()
+     : data((json) {{}})
+    { }
+
+    void parse(const string& s) {
+        data = json.parse(s);
     }
 
-    void setInterval(std::chrono::seconds secs) {
+    void write(ostream& os) const {
+        os << data.dump() << endl;
+    }
+private:
+    json data;
+};
+*/
+
+struct LoadMonitor {
+
+    LoadMonitor(const shared_ptr<Http::Endpoint>& endpoint)
+    : endpoint_(endpoint)
+    , interval(chrono::seconds(1)) {
+    }
+
+    void setInterval(chrono::seconds secs) {
         interval = secs;
     }
 
     void start() {
         shutdown_ = false;
-        thread.reset(new std::thread(std::bind(&LoadMonitor::run, this)));
+        thread.reset(new std::thread(bind(&LoadMonitor::run, this)));
     }
 
     void shutdown() {
@@ -63,11 +86,11 @@ struct LoadMonitor {
     }
 
 private:
-    std::shared_ptr<Http::Endpoint> endpoint_;
+    shared_ptr<Http::Endpoint> endpoint_;
     std::unique_ptr<std::thread> thread;
-    std::chrono::seconds interval;
+    chrono::seconds interval;
 
-    std::atomic<bool> shutdown_;
+    atomic<bool> shutdown_;
 
     void run() {
         Tcp::Listener::Load old;
@@ -81,13 +104,13 @@ private:
                 if (global > 100) global = 100;
 
                     if (global > 1)
-                            std::cout << "Global load is " << global << "%" << std::endl;
+                            cout << "Global load is " << global << "%" << endl;
                     else
-                        std::cout << "Global load is 0%" << std::endl;
+                        cout << "Global load is 0%" << endl;
                     },
             Async::NoExcept);
 
-            std::this_thread::sleep_for(std::chrono::seconds(interval));
+            this_thread::sleep_for(chrono::seconds(interval));
         }
     }
 };
@@ -107,124 +130,131 @@ class Handler : public Http::Handler {
     HTTP_PROTOTYPE(Handler);
 
     void onRequest(
-            const Http::Request& req,
-            Http::ResponseWriter response) override {
+        const Http::Request& req,
+        Http::ResponseWriter response) override
+    {
         
         using namespace Http;
         
+        // parse request
         string res = req.resource();
         auto reslist = split(res, '/');
         auto length = reslist.size() - 1;
         
-        std::cout << "resource: " << res << std::endl;
-
+        // setup response
+        json data = {{"success", false}};
+        
+        // log request
+        cout << req.method() << " " << res << endl;
+        
         // GET
         if (req.method() == Method::Get) {
-            string body;
-            
             // get (key)
             if (length >= 2 && reslist[1] == "key") {
-                json data;
+                // interpret input
                 Cache::key_type key = reslist[2];
                 Cache::index_type val_size;
+                // get key->value from cache
                 data["key"] = key;
-                data["value"] = cache->get(key, val_size);
-                body = data.dump();
-                
-                response.send(Code::Ok, body);
+                data["value"] = "cache->get(key, val_size)"; // TODO
+                data["success"] = true;
             }
             // memsize
             else if (length >= 1 && reslist[1] == "memsize") {
-                json data;
+                // get memused from cache
                 data["memused"] = cache->space_used();
-                body = data.dump();
-                
-                response.send(Code::Ok, body);
+                data["success"] = true;
             }
             // invalid
             else {
-                response.send(Code::Bad_Request, body);
+                response.send(Code::Bad_Request, data.dump());
+                return;
             }
         }
+        
         // PUT
-        else if (req.method() == Method::Put) {
-            string msg;
-            
+        else if (req.method() == Method::Put) {            
             // set key value
             if (length >= 3 && reslist[1] == "key") {
-                // TODO
-                msg += "set key to value: " + reslist[2] + " = " + reslist[3];
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Ok, msg);
+                // parse input
+                Cache::key_type key = reslist[2];
+                
+                string val_s = reslist[3];
+                Cache::val_type val = "s";
+                
+//                Cache::val_type val = (string) reslist[3];
+                Cache::index_type size = reslist[3].size(); // size(char) = 1
+                // set key->val in cache
+                cache->set(key, val, size);
+                data["success"] = true;
             }
             // invalid
             else {
-                // TODO
-                msg += "invalid PUT";
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Bad_Request, msg);
+                response.send(Code::Bad_Request, data.dump());
+                return;
             }
         
         }
         // DELETE
         else if (req.method() == Method::Delete) {
-            string msg;
-            
-            // delete key
+            // delete (key)
             if (length >= 2 && reslist[1] == "key") {
-                // TODO
-                msg += "delete key: " + reslist[2];
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Ok, msg);
+                Cache::key_type key = reslist[2];
+                data["success"] = true;
             // invalid
             } else {
-                msg += "invalid DELETE";
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Bad_Request, msg);
+                response.send(Code::Bad_Request, data.dump());
+                return;
             }
         }
+        
         // HEAD
         else if (req.method() == Method::Head) {
-            string msg;
-            // header of key
+            // head
             if (length >= 2 && reslist[1] == "key") {
-                // TODO
-                msg += "header for key: " + reslist[2];
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Ok, msg);
+                // create header and add to response
+                /*
+                CacheHeader * header = new CacheHeader();
+                header->parse(((json) {
+                    {"Version"      , "1.1"},
+                    {"Date"         , to_string(chrono::system_clock::now())},
+                    {"Accept"       , "text/plain"},
+                    {"Content-Type" , "application/json"}
+                }).dump());
+                response.headers().add(header);
+                */
+                data["success"] = true;
+                
             }
             // invalid
             else {
-                msg += "invalid HEAD";
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Bad_Request, msg);
+                response.send(Code::Bad_Request, data.dump());
+                return;
             }
         }
+        
         // POST
         else if (req.method() == Method::Post) {
-            string msg;
             // shutdown
             if (length >= 1 && reslist[1] == "shutdown") {
-                // TODO
-                msg += "clean up and shut down";
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Ok, msg);
+                // shutdown server
                 server->shutdown();
-                exit(EXIT_SUCCESS);
-            } else {
-                // TODO
-                msg += "invalid POST";
-                cout << "msg: " << msg << std::endl;
-                response.send(Code::Bad_Request, msg);
+                data["success"] = true;
+            }
+            // invalid
+            else {
+                response.send(Code::Bad_Request, data.dump());
+                return;
             }
         }
         // other
         else {
-            string msg;
-            msg += "unsupported HTTP command";
-            cout << "msg: " << msg << std::endl;
-            response.send(Code::Bad_Request, msg);
+            response.send(Code::Bad_Request, data.dump());
+            return;
         }
+        
+        // respond to successful request from client
+        response.send(Code::Ok, data.dump(), MIME(Application, Json));
     }
 
     void onTimeout(
@@ -249,32 +279,38 @@ int main(int argc, char *argv[]) {
     while((opt = getopt(argc, argv, "m:t:")) != -1) {
         switch(opt) {
             case 'm':
-                maxmem = std::atoi(optarg);
+                maxmem = atoi(optarg);
                 break;
             case 't':
-                port = std::atoi(aptarg);
+                portnum = atoi(optarg);
                 break;
             default:
-                std::cout << "unrecognized command line argument: " << opt << std::endl;
+                cout << "unrecognized command line argument: " << opt << endl;
                 exit(EXIT_FAILURE);
         }
     }
     
+    // register CacheProtocol header
+    // TODO
+    // Http::Header::Registry::registerHeader<CacheHeader>();
+    
     // setup server
     Port port(portnum);
     Address addr(Ipv4::any(), port);
-    server = std::make_shared<Http::Endpoint>(addr);
+    server = make_shared<Http::Endpoint>(addr);
     auto opts = Http::Endpoint::options().threads(1).flags(Tcp::Options::InstallSignalHandler);
     server->init(opts);
     
     // setup cache
     cache = new Cache(maxmem);
+    cout << "creating cache with " << maxmem << " space" << endl;
     
     // start server
     server->setHandler(Http::make_handler<Handler>());
+    cout << "starting server on port " << portnum << endl;
     server->serve();
 
     // shutdown server
-    std::cout << "Shutdowning server" << std::endl;
+    cout << "Shutdowning server" << endl;
     server->shutdown();
 }

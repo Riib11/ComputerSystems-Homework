@@ -99,8 +99,6 @@ public:
                 }
             }
         }
-        // adding new value will increase memused
-        memused_ += size;
     }
     
     void
@@ -109,13 +107,26 @@ public:
         if (size > maxmem_ && !USING_RESIZING_) {
             throw "size too big for cache :/";
         }
-        // key not already in cache, or the entry in the cache
-        // that will be overwritten is at least as big as the
-        // new entry
-        if (!contains(key) || cache_.at(key).second >= size) {
+
+        // already have key, so entry will be overwritten
+        // if new value is larger than old, then check eviction
+        if (contains(key)) {
+            index_type size_old = cache_.at(key).second;
+            if (size_old < size) {
+                update_evicting(size);
+            }
+            memused_ += size - size_old;
+        }
+        
+        // don't already have key, so just add as new
+        // and add to memused
+        else {
             update_evicting(size);
+            memused_ += size;
         }
         cache_[key] = std::make_pair(val, size);
+        
+        // push to evictor if used
         if (USING_CUSTOM_EVICTION_) {
             evictor_obj_->push(key);
         }

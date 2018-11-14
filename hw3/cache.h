@@ -6,7 +6,6 @@
 
 #include <functional>
 #include <memory>
-
 #include <string>
 
 class Cache {

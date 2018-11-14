@@ -34,7 +34,7 @@ struct PrintException {
     }
 };
 
-// TODO
+// TODO: header
 /*
 class CacheHeader : public Http::Header {
 public:
@@ -153,7 +153,14 @@ class Handler : public Http::Handler {
                 Cache::index_type val_size;
                 // get key->value from cache
                 data["key"] = key;
-                data["value"] = "cache->get(key, val_size)"; // TODO
+                
+                // cast to string
+                const void* val = cache->get(key, val_size);
+                const std::string *val_string_ptr = static_cast<const std::string*>(val);
+                std::string val_string = *val_string_ptr;
+                delete val_string_ptr;
+                data["value"] = val_string;
+                
                 data["success"] = true;
             }
             // memsize
@@ -186,10 +193,15 @@ class Handler : public Http::Handler {
                 // interpret input
                 Cache::key_type key = reslist[2];
                 // create new cache entry
-                // TODO
-                // Cache::val_type val = (string) reslist[3];
-                Cache::val_type val = "s";
+                
+                // cast string to void*
+                std::string val_string = reslist[3];
+                std::string* val_string_ptr = &val_string;
+                Cache::val_type val = val_string_ptr;
+                delete val_string_ptr;
+                
                 Cache::index_type size = reslist[3].size(); // size(char) = 1
+                
                 // set key->val in cache
                 cache->set(key, val, size);
                 data["success"] = true;
@@ -251,7 +263,7 @@ class Handler : public Http::Handler {
 
 void server_start(int portnum, int maxmem) {
     // register CacheProtocol header
-    // TODO
+    // TODO: header
     // Http::Header::Registry::registerHeader<CacheHeader>();
     
     // setup server

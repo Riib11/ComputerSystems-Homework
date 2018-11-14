@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
     string str = "v";
-    const void* val = static_cast<const void*>(&str);
+    const void* val = stati_cast<const void*>(&str);
     
     const string* val_str_ptr = static_cast<const string*>(val);
     

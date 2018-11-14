@@ -192,12 +192,16 @@ class Handler : public Http::Handler {
                 // interpret input
                 Cache::key_type key = reslist[2];
                 // create new cache entry
-                
+                                
                 // cast string to void*
                 std::string val_string = reslist[3];
                 std::string* val_string_ptr = &val_string;
+                
+                
+                cout << "val_string = " << val_string << std::endl;
+                cout << "val_string_ptr = " << val_string_ptr << std::endl;
+                
                 Cache::val_type val = val_string_ptr;
-                delete val_string_ptr;
                 
                 Cache::index_type size = reslist[3].size(); // size(char) = 1
                 

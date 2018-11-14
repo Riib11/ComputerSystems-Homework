@@ -20,7 +20,7 @@
       <itemPath>cache.cpp</itemPath>
       <itemPath>evictor_fifo.cpp</itemPath>
       <itemPath>evictor_lru.cpp</itemPath>
-      <itemPath>main.cpp</itemPath>
+      <itemPath>main_server.cpp</itemPath>
       <itemPath>server.cpp</itemPath>
       <itemPath>server_example.cpp</itemPath>
     </logicalFolder>
@@ -77,7 +77,7 @@
       </item>
       <item path="json.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="main_server.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="server.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -126,7 +126,7 @@
       </item>
       <item path="json.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="main_server.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="server.cpp" ex="false" tool="1" flavor2="0">
       </item>

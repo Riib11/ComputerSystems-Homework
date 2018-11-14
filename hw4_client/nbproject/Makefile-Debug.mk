@@ -38,7 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/cache.o \
 	${OBJECTDIR}/client.o \
 	${OBJECTDIR}/client_example.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/main_client.o
 
 
 # C Compiler Flags
@@ -80,10 +80,10 @@ ${OBJECTDIR}/client_example.o: client_example.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Ipistache -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/client_example.o client_example.cpp
 
-${OBJECTDIR}/main.o: main.cpp
+${OBJECTDIR}/main_client.o: main_client.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Ipistache -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -Ipistache -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_client.o main_client.cpp
 
 # Subprojects
 .build-subprojects:

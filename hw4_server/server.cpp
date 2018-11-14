@@ -9,6 +9,8 @@
 #include <pistache/http.h>
 #include <pistache/peer.h>
 #include <pistache/http_headers.h>
+#include <pistache/http_header.h>
+#include <sys/sysmacros.h>
 #include <pistache/cookie.h>
 #include <pistache/endpoint.h>
 #include "cache.h"
@@ -37,8 +39,10 @@ struct PrintException {
 };
 
 // TODO: header
-/*
-class CacheHeader : public Http::Header {
+// + make it input and output data correctly
+// + is it right to encode in JSON? or is there a default
+//   sort of format that it already requires?
+class CacheHeader : public Http::Header::Header {
 public:
 
     NAME("Cache-Header")
@@ -57,7 +61,7 @@ public:
 private:
     json data;
 };
-*/
+
 
 struct LoadMonitor {
 
@@ -184,6 +188,7 @@ class Handler : public Http::Handler {
                 // data["Date"]            = to_string(chrono::system_clock::now());
                 data["Accept"]          = "text/plain";
                 data["Content-Type"]    = "application/json";
+                
                 data["success"] = "true";
             }
             // invalid
@@ -283,9 +288,8 @@ class Handler : public Http::Handler {
 };
 
 void server_start(int portnum, int maxmem) {
-    // register CacheProtocol header
-    // TODO: header
-    // Http::Header::Registry::registerHeader<CacheHeader>();
+    // register Cache header
+    Http::Header::Registry::registerHeader<CacheHeader>();
     
     // setup server
     Port port(portnum);

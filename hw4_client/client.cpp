@@ -13,6 +13,8 @@ using namespace Pistache::Http;
 #include <json.h>
 using json = nlohmann::json;
 
+#include "cache.h"
+
 void report(Http::Response response) {
     std::cout << "Response code = " << response.code() << std::endl;
     auto body = response.body();
@@ -100,12 +102,14 @@ client_request(
     // store response
     Http::Cookie cookie = Http::Cookie("Tracker", "tracking");
     std::vector<Async::Promise<Http::Response>> responses;
-    std::string response_body = ((json) {{"success", false}}).dump();
+    std::string response_body = ((json) {{"success", "false"}}).dump();
+    auto response_code = Http::Code::Bad_Request;
     
     // GET
     if (command == cmd_get || command == cmd_memsize) {
         auto response = client.get(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
+            response_code = response.code();
             response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
@@ -113,6 +117,7 @@ client_request(
     else if (command == cmd_set) {
         auto response = client.put(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
+            response_code = response.code();
             response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
@@ -120,6 +125,7 @@ client_request(
     else if (command == cmd_del) {
         auto response = client.put(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
+            response_code = response.code();
             response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
@@ -127,6 +133,7 @@ client_request(
     else if (command == cmd_head) {
         auto response = client.get(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
+            response_code = response.code();
             response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
@@ -134,6 +141,7 @@ client_request(
     else if (command == cmd_shutdown) {
         auto response = client.post(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
+            response_code = response.code();
             response_body = response.body(); }, Async::IgnoreException);
         responses.push_back(std::move(response));
     }
@@ -142,6 +150,8 @@ client_request(
     auto sync = Async::whenAll(responses.begin(), responses.end());
     Async::Barrier<std::vector<Http::Response>> barrier(sync);
     barrier.wait_for(std::chrono::seconds(2));
+    
+    std::cout << "response body: " << response_body << std::endl;
     
     return response_body;
 }

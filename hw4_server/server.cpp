@@ -69,16 +69,16 @@ struct LoadMonitor {
     }
 
     void start() {
-        shutdown_ = false;
+        shutdown_ = "false";
         thread.reset(new std::thread(bind(&LoadMonitor::run, this)));
     }
 
     void shutdown() {
-        shutdown_ = true;
+        shutdown_ = "true";
     }
 
     ~LoadMonitor() {
-        shutdown_ = true;
+        shutdown_ = "true";
         if (thread) thread->join();
     }
 
@@ -161,13 +161,13 @@ class Handler : public Http::Handler {
                 delete val_string_ptr;
                 data["value"] = val_string;
                 
-                data["success"] = true;
+                data["success"] = "true";
             }
             // memsize
             else if (length >= 1 && reslist[1] == "memsize") {
                 // get memused from cache
                 data["memused"] = cache->space_used();
-                data["success"] = true;
+                data["success"] = "true";
             }
             // head
             else if (length >= 1 && reslist[1] == "head") {
@@ -176,9 +176,8 @@ class Handler : public Http::Handler {
                 // data["Date"]            = to_string(chrono::system_clock::now());
                 data["Accept"]          = "text/plain";
                 data["Content-Type"]    = "application/json";
-                data["success"] = true;
+                data["success"] = "true";
             }
-            
             // invalid
             else {
                 response.send(Code::Bad_Request, data.dump());
@@ -204,7 +203,7 @@ class Handler : public Http::Handler {
                 
                 // set key->val in cache
                 cache->set(key, val, size);
-                data["success"] = true;
+                data["success"] = "true";
             }
             // invalid
             else {
@@ -218,7 +217,7 @@ class Handler : public Http::Handler {
             // delete (key)
             if (length >= 2 && reslist[1] == "key") {
                 Cache::key_type key = reslist[2];
-                data["success"] = true;
+                data["success"] = "true";
             // invalid
             } else {
                 response.send(Code::Bad_Request, data.dump());
@@ -232,7 +231,7 @@ class Handler : public Http::Handler {
             if (length >= 1 && reslist[1] == "shutdown") {
                 // shutdown server
                 server->shutdown();
-                data["success"] = true;
+                data["success"] = "true";
             }
             // invalid
             else {

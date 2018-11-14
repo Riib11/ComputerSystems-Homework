@@ -18,13 +18,15 @@ struct Cache::Impl {};
 Cache::Cache(
     index_type maxmem,
     hash_func hasher)
-{}
+{
+    
+}
 
 // Cleanup cache
 Cache::~Cache() {}
 
 bool check_success(json response) {
-    return response["success"];
+    return response["success"] == "";
 }
 
 /*
@@ -35,18 +37,18 @@ int Cache::
 set(key_type key, val_type val, index_type size) {
     const std::string *val_string_ptr = static_cast<const std::string*>(val);
     std::string val_string = *val_string_ptr;
-    delete val_string_ptr;
+    std::cout << "val_string: " << val_string << std::endl;
     
     std::string response_string = client_request("set", key, val_string);
-    json response; response.parse(response_string);
+    json response = json::parse(response_string);
     if (!check_success(response)) { return 1; } // error
     return 0; // no error
 }
 
 Cache::val_type Cache::
 get(key_type key, index_type& val_size) const {
-    std::string response_string = client_request("get", key, "");
-    json response; response.parse(response_string);
+    std::string response_string = client_request("get", key, "x");
+    json response = json::parse(response_string);
     if (!check_success(response)) { // error
         val_size = 0;
         return NULL;
@@ -62,16 +64,18 @@ get(key_type key, index_type& val_size) const {
 
 int Cache::
 del(key_type key) {
-    std::string response_string = client_request("get", key, "");
-    json response; response.parse(response_string);
+    std::string response_string = client_request("get", key, "x");
+    json response = json::parse(response_string);
     if (!check_success(response)) { return 0; } // error
     return 1; // no error
 }
 
 Cache::index_type Cache::
 space_used() const {
-    std::string response_string = client_request("get", "", "");
-    json response; response.parse(response_string);
-    check_success(response);
+    std::string response_string = client_request("memsize", "x", "x");
+    json response = json::parse(response_string);
+    if (!check_success(response)) {
+        return 0;
+    }
     return response["memused"];
 }

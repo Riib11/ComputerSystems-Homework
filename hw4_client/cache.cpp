@@ -11,6 +11,8 @@
 #include <json.h>
 using json = nlohmann::json;
 
+using namespace std;
+
 struct Cache::Impl {}; 
 
 
@@ -35,11 +37,15 @@ bool check_success(json response) {
 
 int Cache::
 set(key_type key, val_type val, index_type size) {
-    const std::string *val_string_ptr = static_cast<const std::string*>(val);
-    std::string val_string = *val_string_ptr;
-    std::cout << "val_string: " << val_string << std::endl;
+    const string* val_str_ptr = static_cast<const string*>(val);
     
-    std::string response_string = client_request("set", key, val_string);
+    string val_str = new char[size+1];
+    val_str = *val_str_ptr;
+    
+    // DEBUG
+    // cout << "val_str = [" << val_str << "]" << endl;
+    
+    string response_string = client_request("set", key, val_str);
     json response = json::parse(response_string);
     if (!check_success(response)) { return 1; } // error
     return 0; // no error

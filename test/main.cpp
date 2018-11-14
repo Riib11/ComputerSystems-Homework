@@ -1,30 +1,20 @@
 #include <cstdlib>
-#include <vector>
-#include <memory>
+#include <iostream>
 
-using key_type = const std::string;  // Keys for K-V pairs
-using val_type = const void*;        // Values for K-V pairs
-using index_type = uint32_t;         // Internal indexing to K-V elements
+using namespace std;
 
-class FIFO {
+int main() {
+    string str = "v";
+    const void* val = static_cast<const void*>(&str);
     
-    std::vector<std::string> stack;
+    const string* val_str_ptr = static_cast<const string*>(val);
     
-public:
+    cout << "length = " << str.length() << endl;
     
-    FIFO() {
-        
-    };
+    string val_str = new char[str.length()+10];
+    val_str = *val_str_ptr;
     
-};
-
-/*
- * 
- */
-int main(int argc, char** argv) {
+    cout << "val_str = [" << val_str << "]" << endl;
     
-    auto fifo = new FIFO();
-
     return 0;
 }
-

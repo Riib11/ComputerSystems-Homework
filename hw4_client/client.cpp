@@ -31,8 +31,11 @@ void error_missing_arg(std::string args) {
 Http::Client client;
 std::string address;
 
-void client_start(std::string address_) {
+void client_address(std::string address_) {
     address = address_;
+}
+
+void client_start() {
     // Http client options
     auto opts = Http::Client::options()
             .threads(1)
@@ -53,6 +56,7 @@ client_request(
     if (command == "") { error_missing_arg("command"); }
     
     std::string
+        cmd_start    = "start",
         cmd_get      = "get",
         cmd_set      = "set",
         cmd_memsize  = "memsize",
@@ -63,8 +67,14 @@ client_request(
     // create resource
     std::string resource;
     
+    // start (memsize)
+    if (command == cmd_start) {
+        // key serves as memsize
+        if (key == "") { error_missing_arg("maxmem"); }
+        resource = address + "/start/" + key;
+    }
     // get (key)
-    if (command == cmd_get) {
+    else if (command == cmd_get) {
         if (key == "") { error_missing_arg("key"); }
         resource = address + "/key/" + key;
     }
@@ -138,7 +148,7 @@ client_request(
         responses.push_back(std::move(response));
     }
     // POST
-    else if (command == cmd_shutdown) {
+    else if (command == cmd_start || command == cmd_shutdown) {
         auto response = client.post(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
             response_code = response.code();

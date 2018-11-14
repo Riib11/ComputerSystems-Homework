@@ -8,7 +8,9 @@
 
 using namespace std;
 
-void client_start(string address_);
+void client_address(string address_);
+
+void client_start();
 
 void client_stop();
 

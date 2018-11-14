@@ -15,20 +15,24 @@ using namespace std;
 
 struct Cache::Impl {}; 
 
+bool check_success(json response) {
+    return response["success"] == "true";
+}
 
 // Create a new cache object with a given max memory capacity
 Cache::Cache(
     index_type maxmem,
     hash_func hasher)
 {
-    
+    client_start();
+    string response_string = client_request("start", to_string(maxmem), "");
+    json response = json::parse(response_string);
+    if (!check_success(response)) { throw std::invalid_argument("failure in creating cache"); } // error
 }
 
 // Cleanup cache
-Cache::~Cache() {}
-
-bool check_success(json response) {
-    return response["success"] == "";
+Cache::~Cache() {
+    client_stop();
 }
 
 /*

@@ -12,6 +12,8 @@
 #include <pistache/cookie.h>
 #include <pistache/endpoint.h>
 #include "cache.h"
+#include <inttypes.h>
+#include <stdio.h>
 
 using namespace std;
 using namespace Pistache;
@@ -120,6 +122,12 @@ vector<string> split(string str, char splitter) {
         seglist.push_back(strseg);
     }
     return seglist;
+}
+
+Cache::index_type parse_index_type(const char* s) {
+    Cache::index_type x;
+    sscanf(s, "%" SCNu32, &x);
+    return x;
 }
 
 class Handler : public Http::Handler {
@@ -231,6 +239,16 @@ class Handler : public Http::Handler {
         
         // POST
         else if (req.method() == Method::Post) {
+            // start (memsize)
+            if (length >= 2 && reslist[1] == "start") {
+                // interpret input
+                const string maxmem_str = reslist[2];
+                const char*  maxmem_ch_ptr = maxmem_str.c_str();
+                Cache::index_type maxmem = parse_index_type(maxmem_ch_ptr);
+                cache = new Cache(maxmem);
+                cout << "created new cache with maxmem = " << maxmem << endl;
+                data["success"] = "true";
+            }
             // shutdown
             if (length >= 1 && reslist[1] == "shutdown") {
                 // shutdown server
@@ -276,10 +294,6 @@ void server_start(int portnum, int maxmem) {
     auto opts = Http::Endpoint::options().threads(1).flags(Tcp::Options::InstallSignalHandler);
     server->init(opts);
         
-    // setup cache
-    cache = new Cache(maxmem);
-    cout << "creating cache with " << maxmem << " space" << endl;
-    
     // start server
     server->setHandler(Http::make_handler<Handler>());
     cout << "starting server on port " << portnum << endl;

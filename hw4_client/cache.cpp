@@ -1,11 +1,15 @@
-#include <cache.h>
 #include <cstdlib>
 #include <unordered_map>
 #include <map>
 #include <iostream>
 #include <vector>
 #include <stdexcept>
+#include <inttypes.h>
+#include <stdio.h>
+#include <chrono>
+#include <thread>
 
+#include <cache.h>
 #include "client.h"
 
 #include <json.h>
@@ -24,15 +28,20 @@ Cache::Cache(
     index_type maxmem,
     hash_func hasher)
 {
-    client_start();
-    string response_string = client_request("start", to_string(maxmem), "");
+    // start client
+//    client_start();
+    // tell server to start
+    string response_string = client_request("new", to_string(maxmem), "");
     json response = json::parse(response_string);
     if (!check_success(response)) { throw std::invalid_argument("failure in creating cache"); } // error
 }
 
 // Cleanup cache
 Cache::~Cache() {
+    // stop client
     client_stop();
+    // wait a second to prevent collision with subsequent cache creations
+    this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 /*
@@ -41,9 +50,8 @@ Cache::~Cache() {
 
 int Cache::
 set(key_type key, val_type val, index_type size) {
-    const string* val_str_ptr = static_cast<const string*>(val);
-    
-    string val_str = new char[size+1];
+    const char** val_str_ptr = reinterpret_cast<const char**>(&val);
+    const char* val_str = new char[size+1];
     val_str = *val_str_ptr;
     
     // DEBUG
@@ -84,8 +92,13 @@ Cache::index_type Cache::
 space_used() const {
     std::string response_string = client_request("memsize", "x", "x");
     json response = json::parse(response_string);
-    if (!check_success(response)) {
-        return 0;
-    }
+    if (!check_success(response)) { return 0; }
     return response["memused"];
+//    
+//    
+//    // cast: string -> int32_t
+//    Cache::index_type x;
+//    const char* cstr = ((string) response["memused"]).c_str();
+//    sscanf(cstr, "%" SCNu32, &x);
+//    return x;
 }

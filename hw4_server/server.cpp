@@ -47,9 +47,9 @@ public:
 
     NAME("Cache-Header")
 
-    CacheHeader()
-     : data((json) {{}})
-    { }
+    CacheHeader() : data((json) {{}}) {
+        cout << "instantiating new Cache-Header";
+    }
 
     void parse(const string& s) {
         data = json::parse(s);
@@ -155,7 +155,7 @@ class Handler : public Http::Handler {
         // setup response
         json data = {{"success", false}};
         
-        // log request
+        // DEBUG: log request
         cout << req.method() << " " << res << endl;
         
         // GET
@@ -211,13 +211,10 @@ class Handler : public Http::Handler {
                 // cast string to void*
                 std::string val_string = reslist[3];
                 std::string* val_string_ptr = &val_string;
-                
-                
-                cout << "val_string = " << val_string << std::endl;
-                cout << "val_string_ptr = " << val_string_ptr << std::endl;
-                
+                // DEBUG: log cast process: void* -> string
+                // cout << "val_string = " << val_string << std::endl;
+                // cout << "val_string_ptr = " << val_string_ptr << std::endl;
                 Cache::val_type val = val_string_ptr;
-                
                 Cache::index_type size = reslist[3].size(); // size(char) = 1
                 
                 // set key->val in cache
@@ -237,8 +234,9 @@ class Handler : public Http::Handler {
             if (length >= 2 && reslist[1] == "key") {
                 Cache::key_type key = reslist[2];
                 data["success"] = "true";
+            }
             // invalid
-            } else {
+            else {
                 response.send(Code::Bad_Request, data.dump());
                 return;
             }
@@ -247,20 +245,22 @@ class Handler : public Http::Handler {
         // POST
         else if (req.method() == Method::Post) {
             // start (memsize)
-            if (length >= 2 && reslist[1] == "start") {
+            if (length >= 2 && reslist[1] == "new") {
                 // interpret input
                 const string maxmem_str = reslist[2];
                 const char*  maxmem_ch_ptr = maxmem_str.c_str();
                 Cache::index_type maxmem = parse_index_type(maxmem_ch_ptr);
                 cache = new Cache(maxmem);
-                cout << "created new cache with maxmem = " << maxmem << endl;
                 data["success"] = "true";
+                // DEBUG: log creation of new cache
+                // cout << "created new cache with maxmem = " << maxmem << endl;
             }
             // shutdown
-            if (length >= 1 && reslist[1] == "shutdown") {
+            else if (length >= 1 && reslist[1] == "shutdown") {
                 // shutdown server
                 server->shutdown();
                 data["success"] = "true";
+                cout << "shutting down server";
             }
             // invalid
             else {
@@ -275,8 +275,16 @@ class Handler : public Http::Handler {
             return;
         }
         
-        // respond to successful request from client
-        response.send(Code::Ok, data.dump(), MIME(Application, Json));
+        // respond to successful executed request
+        if(data["success"] == "true") {
+            response.send(Code::Ok, data.dump(), MIME(Application, Json));
+        }
+        // response to unsuccessfully executed request
+        else {
+            response.send(Code::Bad_Request, data.dump(), MIME(Application, Json));
+        }
+        
+        
     }
 
     void onTimeout(

@@ -56,7 +56,7 @@ client_request(
     if (command == "") { error_missing_arg("command"); }
     
     std::string
-        cmd_start    = "start",
+        cmd_new      = "new",
         cmd_get      = "get",
         cmd_set      = "set",
         cmd_memsize  = "memsize",
@@ -68,10 +68,10 @@ client_request(
     std::string resource;
     
     // start (memsize)
-    if (command == cmd_start) {
+    if (command == cmd_new) {
         // key serves as memsize
         if (key == "") { error_missing_arg("maxmem"); }
-        resource = address + "/start/" + key;
+        resource = address + "/new/" + key;
     }
     // get (key)
     else if (command == cmd_get) {
@@ -148,7 +148,7 @@ client_request(
         responses.push_back(std::move(response));
     }
     // POST
-    else if (command == cmd_start || command == cmd_shutdown) {
+    else if (command == cmd_new || command == cmd_shutdown) {
         auto response = client.post(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
             response_code = response.code();

@@ -52,10 +52,12 @@ public:
     { }
 
     void parse(const string& s) {
-        data = json.parse(s);
+        data = json::parse(s);
+        cout << "parsing header string: " << s << endl;
     }
 
     void write(ostream& os) const {
+        cout << "writing from cacheheader!" << endl;
         os << data.dump() << endl;
     }
 private:
@@ -266,6 +268,7 @@ class Handler : public Http::Handler {
                 return;
             }
         }
+        
         // other
         else {
             response.send(Code::Bad_Request, data.dump());

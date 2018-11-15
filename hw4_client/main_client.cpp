@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
     auto memused = cache->space_used();
     assert (memused == val_str.length());
     
-    return 0;
+    cache->~Cache();
+    
+    exit(EXIT_SUCCESS);
 }
 

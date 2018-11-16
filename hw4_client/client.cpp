@@ -47,8 +47,7 @@ void client_stop() {
     client.shutdown();
 }
 
-std::string
-client_request(
+std::string client_request(
     std::string command,
     std::string key,
     std::string value

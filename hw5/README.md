@@ -24,7 +24,7 @@ The Server implements the following:
 
 The Client implements the following:
 - Send packets to server which specify actions for the server to carry out. If server is not found, then throw exception. If the response indicates that the execution was unsuccessful, then throw exception.
-- Recieve response packets to client which specify a response to the execution of the actions the client specified. If a response packet is not recieved within a couple seconds (after sending a request), then throw exception.
+- Recieve response packets to client which specify a response to the execution of the actions the client specified. If a response packet is not recieved within 2 seconds (after sending a request), then throw exception.
 - Maintain a single Cache instance.
 - Send `new`, `shutdown`, `set`, `get`, `memused`, and `del` action requests to the server, and then return the appropriate values after executing.
 
@@ -33,7 +33,15 @@ The Client implements the following:
 <!-- You may choose and justify any metric you like, but you must at least include the following metric: sustained throughput, defined as the maximum offered load (in requests per second) at which the mean response time remains under 1 millisecond. For reference and inspiration, check out this paper, especially section V. -->
 <!-- Tip: This metric measures the capacity of a system. Ensure that the system whose capacity your actually measuring (the bottleneck) is your cache, not the network or the client host. I suggest you consider running the benchmarking client on a different host on the same physical network, and verify both are unloaded prior to measuring performance. -->
 
+*Sustained Throughput* (capacity): The maximum offer load (in requests per second) at which the mean response time remains under 1 millisecond. *Response time* is the time between the client's sending of a request to the client's recieving of a response.
+
+<!-- TODO: other metrics -->
+
 ## 4. Parameters
+
+- Client requests' average size
+- Cache's max memory
+- 
 
 ## 5. Studied Factors
 

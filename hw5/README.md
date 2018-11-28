@@ -87,7 +87,7 @@ Each set of requests is differenciated by
 
 Each experiment is executed via the following steps:
 1. Set up Cache server (implemented in hw4_server).
-2. Generate randomized set of requests data i.e. parameters for to-be-executed Gets, Sets, etc.
+2. Generate set of requests data. This set is ordered like so: Set-Old, Set-New, Get, Delete.
 3. Send requests to the server according the generated requests data, at the specified offer rate. Continue sending requests until the total number of client requests is sent.
 4. While sending requests, measure the relevant metrics (as described  in section 3).
 

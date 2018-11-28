@@ -72,17 +72,25 @@ I test the previous factors via measuring a real system - in particular, a _MacB
 <!-- Your goal is to try to represent the ETC workload from the memcache workload analysis paper. You may choose and justify any distributions you like for parameters such as request rate, read/write ratio, key size, value size, etc. Choosing too-simple distributions, such as uniform, will likely not be representative enough. On the other hand, there is no need to reproduce the precise distributions reported in the paper (such as GEV), which is complicated and over-fitting. But to the extent you do want to improve your distributions, you can find inspiration in this project. -->
 
 For each experiment I use a workload with
-- <!-- TODO --> as Cache max memory size
-- <!-- TODO --> as the Cache Key size
-- <!-- TODO --> as the Cache Value size
-- <!-- TODO --> as total number of client requests
+- <!-- TODO: 1024 --> as Cache max memory size
+- <!-- TODO: defined in Cache --> as the Cache Key size
+- <!-- TODO: 2 --> as the Cache Value size
+- <!-- TODO: 512 --> as total number of client requests
 
 Each set of requests is differenciated by
 - Offer rate
 - Distibution of Set-Old, Set-New, Get, and Delete actions
 - Eviction rate
 
+
 ## 8. Experiments
+
+Each experiment is executed via the following steps:
+1. Set up Cache server (implemented in hw4_server).
+2. Generate randomized set of requests data i.e. parameters for to-be-executed Gets, Sets, etc.
+3. Send requests to the server according the generated requests data, at the specified offer rate. Continue sending requests until the total number of client requests is sent.
+4. While sending requests, measure the relevant metrics (as described  in section 3).
+
 
 *Experiment 1*:
 | Factor         | Value |
@@ -91,6 +99,9 @@ Each set of requests is differenciated by
 | SO, SN, G, D   | <!-- [TODO] --> |
 | Eviction rate  | <!-- TODO --> |
 
+| Metric | Value |
+|--------|-------|
+| Sustained Throughput | |
 
 ## 9. Analysis
 

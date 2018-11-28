@@ -1,25 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   main.cpp
- * Author: henry
- *
- * Created on November 27, 2018, 5:08 PM
- */
+#include <cstdlib>
+#include <iostream>
 
 #include <cstdlib>
+#include "client.h"
+#include "cache.h"
 
 using namespace std;
 
-/*
- * 
- */
 int main(int argc, char** argv) {
 
-    return 0;
-}
+    client_address("192.168.84.23:9081");
 
+    // construct cache (starts client)
+    Cache* cache = new Cache(10);
+
+    // set first key-value-size
+    const char* s = "1";
+    const void* s_vptr = s;
+    cache->set("a", s_vptr, 2);
+
+    // set subsequent key-value-size
+     cache->set("b", "12", 2);
+
+    // descruct cache (stop client)
+    cache->~Cache();
+
+    exit(EXIT_SUCCESS);
+}

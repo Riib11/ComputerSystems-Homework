@@ -4,11 +4,16 @@
 #include <cstdlib>
 #include "client.h"
 #include "cache.h"
+#include "experiments.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
-
+    
+    experiment1();
+    
+    
+    /*
     client_address("192.168.84.23:9081");
 
     // construct cache (starts client)
@@ -24,6 +29,7 @@ int main(int argc, char** argv) {
 
     // descruct cache (stop client)
     cache->~Cache();
-
+    */
+    
     exit(EXIT_SUCCESS);
 }

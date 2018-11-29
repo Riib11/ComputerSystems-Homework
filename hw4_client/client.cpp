@@ -15,6 +15,8 @@ using json = nlohmann::json;
 
 #include "cache.h"
 
+const bool DEBUG = true;
+
 void report(Http::Response response) {
     std::cout << "Response code = " << response.code() << std::endl;
     auto body = response.body();
@@ -106,7 +108,7 @@ std::string client_request(
         exit(EXIT_FAILURE);
     }
     
-    std::cout << "resource: " << resource << std::endl;
+    if (DEBUG) { std::cout << "resource: " << resource << std::endl; }
     
     // store response
     Http::Cookie cookie = Http::Cookie("Tracker", "tracking");
@@ -160,7 +162,7 @@ std::string client_request(
     Async::Barrier<std::vector<Http::Response>> barrier(sync);
     barrier.wait_for(std::chrono::seconds(2));
     
-    std::cout << "response body: " << response_body << std::endl;
+    if (DEBUG) { std::cout << "response body: " << response_body << std::endl; }
     
     return response_body;
 }

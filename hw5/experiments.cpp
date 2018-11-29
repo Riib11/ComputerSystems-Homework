@@ -112,7 +112,7 @@ void experiment1() {
     std::chrono::duration<double> duration = end - start;
     
     // report measurements
-    auto average_latency_us = duration.count() / count_client_requests;
+    auto average_latency_us = duration.count()/count_client_requests;
     std::cout << "average latency per request/response: " << average_latency_us << " us\n";
     
     

@@ -3,6 +3,22 @@
 _Partners_: Henry Blanchette and Henry Blanchette
 <!-- _Date_: TODO -->
 
+## 0. TODO
+
+Things to do:
+- make `get` work for experiments
+- figure out how to measure the _throughput_ statistic, as eitan requieres. This is kind of a problem because the way I have my Cache implementation set up, a Cache method both sends the request and waits for a response. Do I want to take the sending into account? I think is probably the best way to do it. Then I think what I can do is just measure how fast it does it all at _max speed_ i.e. without any programmatic delays. The thing this doesn't let me configure is the request rate, but it will be a resulting statistic. it'll be something like
+
+	request_rate(request_distribution, eviction rate)
+
+where, of course I have
+
+	eviction_rate(request_distribution)
+
+so I guess its really just
+
+	request_rate(request_distribution)
+
 
 ## 1. Goals and Definitions
 

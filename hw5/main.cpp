@@ -10,7 +10,7 @@ using namespace std;
 
 int main(int argc, char** argv) {
     
-    experiment1();
+    experiment3();
     
     
     /*

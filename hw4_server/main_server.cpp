@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
     // default arguments
     Cache::index_type maxmem = 100;
-    int portnum = 9084;
+    int portnum = 9086;
     
     // process command line arguments
     int opt;

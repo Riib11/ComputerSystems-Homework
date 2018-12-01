@@ -8,13 +8,13 @@
 #include <unistd.h>
 #include <algorithm>
 
-const std::string ADDRESS = "192.168.84.21:9084";
+const std::string ADDRESS = "192.168.84.21:9086";
 
 const int scale = 1;
-const Cache::index_type max_memory = 512 * scale + 1;
-const int key_size = 3; // number of characters in key
+const Cache::index_type max_memory = (512 * scale) + 1;
+const int key_size = 4; // number of characters in key
 const int val_size = 1; // size (bytes) of value
-const int count_client_requests = 1024 * scale + 1;
+const int count_client_requests = (1024 * scale) + 1;
 
 // converts an int to a string and pads it,
 // ensuring it is at least `length` in length
@@ -49,7 +49,7 @@ std::vector<std::pair<Action, Cache::key_type>> generate_requests_data(
     // note that |"old"| = 3 so it fits `key_size`
     actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Set, "old"));
     
-    // set ols
+    // set old
     for (int i = 0; i < count_so; i++) {
         // "old" is the key that all "set old" actions target
         actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Set, "old"));
@@ -95,8 +95,6 @@ void run_experiment(
     
     // start timer
     auto start = std::chrono::steady_clock::now();
-    auto now = start;
-    auto prev = start;
     std::vector<std::chrono::duration<double>> waal_history;
     
     // send requests to server, and record timing and such
@@ -135,7 +133,7 @@ void run_experiment(
     
     // average latency
     auto average_latency_us = duration.count()/(count_client_requests);
-    std::cout << "average action latency: " << average_latency_us << " seconds\n";
+    std::cout << average_latency_us << " s | ";
     
     // sustained throughput
     int max_waal_i = -1;
@@ -150,11 +148,11 @@ void run_experiment(
     if (max_waal_i < count_client_requests) {
         sus_thr = max_waal_i * 10.0f / (count_client_requests);
     }
-    sus_thr = std::min(1.0f, sus_thr) // max of 1.0
-    std::cout << "sustained throughput: " << sus_thr << "\n";
+    sus_thr = std::min(1.0f, sus_thr); // max of 1.0
+    std::cout << sus_thr << " |\n";
     
     // shutdown server
-    // client_request("shutdown", "k", "v");
+//     client_request("shutdown", "k", "v");
     
     // stop client
     client_stop();
@@ -165,4 +163,35 @@ void experiment1() { run_experiment(
     0.00, // set new
     0.00, // get
     0.00  // del
+); }
+
+void experiment2() { run_experiment(
+    0.00, // set old    
+    1.00, // set new
+    0.00, // get
+    0.00  // del
+); }
+
+
+void experiment3() { run_experiment(
+    0.25, // set old    
+    0.25, // set new
+    0.50, // get
+    0.00  // del
+); }
+
+
+void experiment4() { run_experiment(
+    0.00, // set old    
+    0.50, // set new
+    0.00, // get
+    0.50  // del
+); }
+
+
+void experiment5() { run_experiment(
+    0.00, // set old    
+    0.50, // set new
+    0.25, // get
+    0.25  // del
 ); }

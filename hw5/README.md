@@ -88,7 +88,7 @@ Definition. *Scale* is the coefficient used to scale the Cache max memory size a
 |----------------------------|------------------------------|
 | Set, Get, and Delete rates | 0.00, 0.25, 0.50, 0.75, 1.00 |
 | Eviction rate              | 0.00, 0.25, 0.50, 0.75, 1.00 |
-| Scale                      | 1, 2, 5, 10                  |
+| Scale                      | 1, 8, 16                     |
 
 I kept the key and value sizes at a constant 1 and 3 bytes respectively.
 
@@ -116,7 +116,7 @@ To measure _Sustained Throughput_:
 
 For each experiment I use a workload with
 - `512 * scale` as Cache max memory size
-- `3` as the Cache Key size
+- `4` as the Cache Key size (to fit up to 4 digit numbers)
 - `1` as the Cache Value size
 - `1024 * scale` as total number of client requests
 
@@ -133,18 +133,75 @@ Each experiment is executed via the following steps:
 3. Send requests to the server according the generated requests data, at the specified offer rate. Continue sending requests until the total number of client requests is sent.
 4. While sending requests, measure the relevant metrics (as described  in section 3).
 
+### Experiment 1: Set Old
 
-*Experiment 1*:
 | Factor         | Value |
 |----------------|-------|
 | SO, SN, G, D   | 1.00, 0.00, 0.00, 0.00 |
 | Eviction rate  | 0.00 |
-| Scale 		 | 1 |
+| Scale          | 1 - 8 - 16 |
 
-| Metric | Value |
-|--------|-------|
-| Average Action Latency ||
-| Sustained Throughput ||
+| Scale | AAL | ST |
+|-------|-----|----|
+| 1     | 0.000178668 s | 0.995122 |
+| 8     | 0.000263914 s | 0.999634 |
+| 16    | 0.000400837 s | 0.999695 |
+
+### Experiment 2: Set New
+
+| Factor         | Value |
+|----------------|-------|
+| SO, SN, G, D   | 0.00, 1.00, 0.00, 0.00 |
+| Eviction rate  | 0.50 |
+| Scale          | 1 - 8 - 16 |
+
+| Scale | AAL | ST |
+|-------|-----|----|
+| 1     | 0.000225877 s | 0.995122 |
+| 8     | 0.000423226 s | 0.999634 |
+| 16    | 0.000698039 s | 0.999695 |
+
+### Experiment 3: Set New and Get
+
+| Factor         | Value |
+|----------------|-------|
+| SO, SN, G, D   | 0.00, 0.50, 0.50, 0.00 |
+| Eviction rate  | 0.00 |
+| Scale          | 1 - 8 - 16 |
+
+| Scale | AAL | ST |
+|-------|-----|----|
+| 1     | 
+| 8     | 
+| 16    | 
+
+### Experiment 4: Set New and Delete
+
+| Factor         | Value |
+|----------------|-------|
+| SO, SN, G, D   | 0.00, 0.50, 0.00, 0.50 |
+| Eviction rate  | 0.00 |
+| Scale          | 1 - 8 - 16 |
+
+| Scale | AAL | ST |
+|-------|-----|----|
+| 1     | 
+| 8     | 
+| 16    | 
+
+### Experiment 5: Set New, Get, and Delete
+
+| Factor         | Value |
+|----------------|-------|
+| SO, SN, G, D   | 0.00, 0.50, 0.25, 0.25 |
+| Eviction rate  | 0.00 |
+| Scale          | 1 - 8 - 16 |
+
+| Scale | AAL | ST |
+|-------|-----|----|
+| 1     | 
+| 8     | 
+| 16    | 
 
 ## 9. Analysis
 

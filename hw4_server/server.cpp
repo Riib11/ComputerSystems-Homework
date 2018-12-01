@@ -23,6 +23,8 @@ using namespace Pistache;
 #include <json.h>
 using json = nlohmann::json;
 
+const bool DEBUG = false;
+
 shared_ptr<Http::Endpoint> server;
 
 Cache * cache;
@@ -156,7 +158,7 @@ class Handler : public Http::Handler {
         json data = {{"success", false}};
         
         // DEBUG: log request
-        cout << req.method() << " " << res << endl;
+        if (DEBUG) { cout << req.method() << " " << res << endl; }
         
         // GET
         if (req.method() == Method::Get) {
@@ -260,7 +262,7 @@ class Handler : public Http::Handler {
                 // shutdown server
                 server->shutdown();
                 data["success"] = "true";
-                cout << "shutting down server";
+                if (DEBUG) { cout << "shutting down server"; }
             }
             // invalid
             else {
@@ -315,7 +317,7 @@ void server_start(int portnum, int maxmem) {
     server->serve();
 
     // shutdown server
-    cout << "Shutdowning server" << endl;
+    cout << "Shutting down server" << endl;
     server->shutdown();
 }
 

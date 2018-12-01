@@ -48,24 +48,32 @@ The Client implements the following:
 
 ## 3. Select Metrics
 
-<!-- You may choose and justify any metric you like, but you must at least include the following metric: sustained throughput, defined as the maximum offered load (in requests per second) at which the mean response time remains under 1 millisecond. For reference and inspiration, check out this paper, especially section V. -->
-<!-- Tip: This metric measures the capacity of a system. Ensure that the system whose capacity your actually measuring (the bottleneck) is your cache, not the network or the client host. I suggest you consider running the benchmarking client on a different host on the same physical network, and verify both are unloaded prior to measuring performance. -->
+Definition. _Action Latency_ is the time taken for the client to recieve a response from the server via a client-side Cache method call. This time frame includes the following sections (in order):
+1. Client generates request (for given parameters)
+2. Client sends request to server
+3. Server recieves requestserver executes specified action on server-side Cache
+4. Server sends response to client
+5. Client recieves reponse
 
-*Sustained Throughput* (capacity): The maximum offer load (requests per second) at which the mean response time remains under 1 millisecond. _Response time_ is defined as the time between the client's sending of a request to the client's recieving of a response.
+Matric. *Average Action Latency (AAL)*: Given a distribution of actions, the _average action latency_ is the average action latency for running all of those actions. The distribution is run ordered by type in this way:
+1. Set old
+2. Set new
+3. Get
+4. Delete
 
-<!-- TODO: other metrics -->
-**
+Definition. The _Working Average Action Latency (WAAL)_, given a workload and a percentage of the workload `x`, is the AAL as the Cache is `x`-way through the workload.
+
+Matric. *Sustained Throughput (ST)*: The maximum percentage of the workload at which the WAAL is less than or equal to 1 millisecond.
 
 
 ## 4. Parameters
 
 - Cache Key and Value sizes (bytes)
 - Cache's max memory (bytes)
-- Request rate (requests per second)
-- Eviction rate (average evictions yielded per request)
-- Set, Get, and Delete rates (average per request)
-- Set-Old rate (average number of Sets which set previously-set values, per request)
-- Set-new rate (average number of Sets which set not-previously-set values, per request)
+- Set, Get, and Delete rates (average number of Actions per request)
+- Set Old rate (average number of Set Actions which set previously-set values, per request)
+- Set New rate (average number of Set Actions which set not-previously-set values, per request)
+- Eviction rate (average evictions yielded per Set Action)
 
 
 ## 5. Studied Factors
@@ -74,29 +82,47 @@ The Client implements the following:
 <!-- TODO: see if altering the request rate actually has any effect
 			or if I can even measure it meaningfully at all -->
 
+Definition. *Scale* is the coefficient used to scale the Cache max memory size and the number of requests (same coefficient for each).
+
 | Parameter                  | Levels                       |
 |----------------------------|------------------------------|
 | Set, Get, and Delete rates | 0.00, 0.25, 0.50, 0.75, 1.00 |
 | Eviction rate              | 0.00, 0.25, 0.50, 0.75, 1.00 |
-| Scale 					 | 1, 2, 10, 20 				|
+| Scale                      | 1, 2, 5, 10                  |
+
+I kept the key and value sizes at a constant 1 and 3 bytes respectively.
+
 
 ## 6. Evaluation Technique
 
 I test the previous factors via measuring a real system - in particular, a _MacBook Pro 2013_ (MacOS Mojave) as server and _Dell Latitude E6430_ (Arch Linux) as client.
+
+To measure _Average Action Latency_:
+1. Record `start time`
+2. Run Cache client through all the generated requests data
+3. Record `end time`
+4. The average latency is `({end time} - {start time}) / {number of requests i.e. Cache method calls}`
+
+To measure _Sustained Throughput_:
+1. Initialize the `WAAL`. initialize an array `WAAL history`.
+2. Record `start time`.
+3. Run Cache client through all the generated requests data.
+4. Every 10 requests run, update the `WAAL` and append the new value the `WAAL history`.
+5. Let `max WAAL index` be the last index of the `WAAL history` at which the `WAAL` is less than 1 ms. Then the sustained throughput is `{max WAAL index} * 10 / {number of requests}`.
 
 ## 7. Workload
 
 <!-- Your goal is to try to represent the ETC workload from the memcache workload analysis paper. You may choose and justify any distributions you like for parameters such as request rate, read/write ratio, key size, value size, etc. Choosing too-simple distributions, such as uniform, will likely not be representative enough. On the other hand, there is no need to reproduce the precise distributions reported in the paper (such as GEV), which is complicated and over-fitting. But to the extent you do want to improve your distributions, you can find inspiration in this project. -->
 
 For each experiment I use a workload with
-- <!-- TODO: 512 * scale --> as Cache max memory size
-- <!-- TODO: string(3) --> as the Cache Key size
-- <!-- TODO: 1 --> as the Cache Value size
-- <!-- TODO: 1024 * scale --> as total number of client requests
+- `512 * scale` as Cache max memory size
+- `3` as the Cache Key size
+- `1` as the Cache Value size
+- `1024 * scale` as total number of client requests
 
 Each set of requests is differenciated by
 - Distibution of Set-Old, Set-New, Get, and Delete actions
-- Eviction rate (dependent on distribution)
+- Eviction rate (completely determined distribution)
 
 
 ## 8. Experiments
@@ -111,13 +137,14 @@ Each experiment is executed via the following steps:
 *Experiment 1*:
 | Factor         | Value |
 |----------------|-------|
-| SO, SN, G, D   |  |
-| Eviction rate  |  |
+| SO, SN, G, D   | 1.00, 0.00, 0.00, 0.00 |
+| Eviction rate  | 0.00 |
 | Scale 		 | 1 |
 
 | Metric | Value |
 |--------|-------|
-| Sustained Throughput | |
+| Average Action Latency ||
+| Sustained Throughput ||
 
 ## 9. Analysis
 

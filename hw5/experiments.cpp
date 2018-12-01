@@ -13,7 +13,7 @@ const Cache::index_type max_memory = 512;
 const int key_size = 3; // number of characters in key
 const int val_size = 1; // size (bytes) of value
 const int count_client_requests = 1024;
-const int scale = 10;
+const int scale = 1;
 
 // converts an int to a string and pads it,
 // ensuring it is at least `length` in length
@@ -94,21 +94,34 @@ void run_experiment(
     
     // start timer
     auto start = std::chrono::steady_clock::now();
+    auto now = start;
+    auto prev = start;
+    std::vector<std::chrono::duration<double>> waal_history;
     
     // send requests to server, and record timing and such
     // sends all of them as fast as possible, where for each request
     // wait to get a response before sending next request
     Cache::index_type size = 1;
+    int waal_i = 0;
+    int request_i = 0;
     for (auto it = requests_data.begin(); it != requests_data.end(); ++it) {
         // Send each request to the server
         // The Cache method both sends the request
         // and waits for the response from the server
-        // (up to max wait threshold)
+        // (up to max wait threshold)        
         auto data = *it;
         switch (data.first) {
             case Action::Set: cache->set(data.second, "a", 1); break;
             case Action::Get: cache->get(data.second, size); break;
             case Action::Del: cache->del(data.second); break;
+        }
+        
+        request_i++;
+        waal_i++;
+        // update WAAL history
+        if (waal_i >= 10) {
+            waal_history.push_back((std::chrono::steady_clock::now() - start) / request_i);
+            waal_i = 0;
         }
     }
     
@@ -117,10 +130,24 @@ void run_experiment(
     std::chrono::duration<double> duration = end - start;
     
     
-    // report measurements
+    // average latency
     auto average_latency_us = duration.count()/(count_client_requests * scale);
     std::cout << "average latency per request/response: " << average_latency_us << " us\n";
     
+    // sustained throughput
+    int max_waal_i = -1;
+    for (int i = 0; i < waal_history.size(); ++i) {
+        if (waal_history[i] < 0.001) {
+            max_waal_i = i;
+        } else {
+            break;
+        }
+    }
+    float sus_thr = 1.0;
+    if (max_waal_i >= 0) {
+        sus_thr = max_waal_i * 10 / (count_client_requests * scale);
+    }
+    std::cout << "sustained throughput: " << sus_thr << "\n";
     
     // shutdown server
     // client_request("shutdown", "k", "v");
@@ -130,8 +157,8 @@ void run_experiment(
 }
 
 void experiment1() { run_experiment(
-    0.50, // set old    
-    0.25, // set new
+    1.00, // set old    
+    0.00, // set new
     0.00, // get
-    0.25  // del
+    0.00  // del
 ); }

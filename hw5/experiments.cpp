@@ -6,14 +6,15 @@
 #include <ctime>
 #include <vector>
 #include <unistd.h>
+#include <algorithm>
 
 const std::string ADDRESS = "192.168.84.21:9084";
 
-const Cache::index_type max_memory = 512;
+const int scale = 1;
+const Cache::index_type max_memory = 512 * scale + 1;
 const int key_size = 3; // number of characters in key
 const int val_size = 1; // size (bytes) of value
-const int count_client_requests = 1024;
-const int scale = 1;
+const int count_client_requests = 1024 * scale + 1;
 
 // converts an int to a string and pads it,
 // ensuring it is at least `length` in length
@@ -80,17 +81,17 @@ void run_experiment(
 {
     // generate set of requests data
     auto requests_data = generate_requests_data(
-        (int) (dist_so * count_client_requests * scale),
-        (int) (dist_sn * count_client_requests * scale),
-        (int) (dist_g  * count_client_requests * scale),
-        (int) (dist_d  * count_client_requests * scale));
+        (int) (dist_so * count_client_requests),
+        (int) (dist_sn * count_client_requests),
+        (int) (dist_g  * count_client_requests),
+        (int) (dist_d  * count_client_requests));
     
     // start client
     client_address(ADDRESS);
     client_start();
     
     // create new Cache instance, the single one for this experiment
-    Cache* cache = new Cache(max_memory + 1);
+    Cache* cache = new Cache(max_memory);
     
     // start timer
     auto start = std::chrono::steady_clock::now();
@@ -124,6 +125,8 @@ void run_experiment(
             waal_i = 0;
         }
     }
+    // last update for WAAL history
+    waal_history.push_back((std::chrono::steady_clock::now() - start) / request_i);
     
     // stop timer
     auto end = std::chrono::steady_clock::now();
@@ -131,22 +134,23 @@ void run_experiment(
     
     
     // average latency
-    auto average_latency_us = duration.count()/(count_client_requests * scale);
-    std::cout << "average latency per request/response: " << average_latency_us << " us\n";
+    auto average_latency_us = duration.count()/(count_client_requests);
+    std::cout << "average action latency: " << average_latency_us << " seconds\n";
     
     // sustained throughput
     int max_waal_i = -1;
     for (int i = 0; i < waal_history.size(); ++i) {
-        if (waal_history[i] < 0.001) {
+        if (waal_history[i].count() <= 0.001) {
             max_waal_i = i;
         } else {
             break;
         }
     }
-    float sus_thr = 1.0;
-    if (max_waal_i >= 0) {
-        sus_thr = max_waal_i * 10 / (count_client_requests * scale);
+    float sus_thr = -1.0f;
+    if (max_waal_i < count_client_requests) {
+        sus_thr = max_waal_i * 10.0f / (count_client_requests);
     }
+    sus_thr = std::min(1.0f, sus_thr) // max of 1.0
     std::cout << "sustained throughput: " << sus_thr << "\n";
     
     // shutdown server

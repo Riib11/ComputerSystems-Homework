@@ -15,7 +15,7 @@ using json = nlohmann::json;
 
 #include "cache.h"
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 
 void report(Http::Response response) {
     std::cout << "Response code = " << response.code() << std::endl;
@@ -134,7 +134,7 @@ std::string client_request(
     }
     // DEL
     else if (command == cmd_del) {
-        auto response = client.put(resource).cookie(cookie).send();
+        auto response = client.del(resource).cookie(cookie).send();
         response.then([&](Http::Response response) {
             response_code = response.code();
             response_body = response.body(); }, Async::IgnoreException);

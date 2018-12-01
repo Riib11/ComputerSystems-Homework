@@ -6,7 +6,6 @@ _Partners_: Henry Blanchette and Henry Blanchette
 ## 0. TODO
 
 Things to do:
-- make `get` work for experiments
 - figure out how to measure the _throughput_ statistic, as eitan requieres. This is kind of a problem because the way I have my Cache implementation set up, a Cache method both sends the request and waits for a response. Do I want to take the sending into account? I think is probably the best way to do it. Then I think what I can do is just measure how fast it does it all at _max speed_ i.e. without any programmatic delays. The thing this doesn't let me configure is the request rate, but it will be a resulting statistic. it'll be something like
 
 	request_rate(request_distribution, eviction rate)
@@ -77,9 +76,9 @@ The Client implements the following:
 
 | Parameter                  | Levels                       |
 |----------------------------|------------------------------|
-| Request rate               | 16, 64, 128, 256             |
 | Set, Get, and Delete rates | 0.00, 0.25, 0.50, 0.75, 1.00 |
 | Eviction rate              | 0.00, 0.25, 0.50, 0.75, 1.00 |
+| Scale 					 | 1, 2, 10, 20 				|
 
 ## 6. Evaluation Technique
 
@@ -90,15 +89,14 @@ I test the previous factors via measuring a real system - in particular, a _MacB
 <!-- Your goal is to try to represent the ETC workload from the memcache workload analysis paper. You may choose and justify any distributions you like for parameters such as request rate, read/write ratio, key size, value size, etc. Choosing too-simple distributions, such as uniform, will likely not be representative enough. On the other hand, there is no need to reproduce the precise distributions reported in the paper (such as GEV), which is complicated and over-fitting. But to the extent you do want to improve your distributions, you can find inspiration in this project. -->
 
 For each experiment I use a workload with
-- <!-- TODO: 512 --> as Cache max memory size
-- <!-- TODO: defined in Cache --> as the Cache Key size
-- <!-- TODO: 2 --> as the Cache Value size
-- <!-- TODO: 1024 --> as total number of client requests
+- <!-- TODO: 512 * scale --> as Cache max memory size
+- <!-- TODO: string(3) --> as the Cache Key size
+- <!-- TODO: 1 --> as the Cache Value size
+- <!-- TODO: 1024 * scale --> as total number of client requests
 
 Each set of requests is differenciated by
-- Offer rate
 - Distibution of Set-Old, Set-New, Get, and Delete actions
-- Eviction rate
+- Eviction rate (dependent on distribution)
 
 
 ## 8. Experiments
@@ -113,9 +111,9 @@ Each experiment is executed via the following steps:
 *Experiment 1*:
 | Factor         | Value |
 |----------------|-------|
-| Offer rate     | <!-- TODO --> |
-| SO, SN, G, D   | <!-- [TODO] --> |
-| Eviction rate  | <!-- TODO --> |
+| SO, SN, G, D   |  |
+| Eviction rate  |  |
+| Scale 		 | 1 |
 
 | Metric | Value |
 |--------|-------|

@@ -82,7 +82,7 @@ get(key_type key, index_type& val_size) const {
 
 int Cache::
 del(key_type key) {
-    std::string response_string = client_request("get", key, "x");
+    std::string response_string = client_request("del", key, "x");
     json response = json::parse(response_string);
     if (!check_success(response)) { return 0; } // error
     return 1; // no error

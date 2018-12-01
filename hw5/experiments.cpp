@@ -7,12 +7,13 @@
 #include <vector>
 #include <unistd.h>
 
-const std::string ADDRESS = "134.10.127.215:9083";
+const std::string ADDRESS = "192.168.84.21:9084";
 
 const Cache::index_type max_memory = 512;
 const int key_size = 3; // number of characters in key
 const int val_size = 1; // size (bytes) of value
 const int count_client_requests = 1024;
+const int scale = 10;
 
 // converts an int to a string and pads it,
 // ensuring it is at least `length` in length
@@ -24,6 +25,14 @@ std::string int_to_padded_string(int x) {
 }
 
 enum class Action { Set, Get, Del };
+
+void to_string(Action a) {
+    switch (a) {
+        case Action::Set: cout << "set"; break;
+        case Action::Get: cout << "get"; break;
+        case Action::Del: cout << "del"; break;
+    }
+}
 
 // generates a set of requests to run an experiment on,
 // given the desired distribution of Cache actions
@@ -63,29 +72,25 @@ std::vector<std::pair<Action, Cache::key_type>> generate_requests_data(
     return actions;
 }
 
-void experiment1() {
-    
-    // factors to set
-    int offer_rate = 1;
-    // request distribution
-    float dist_so = 0.5; // 1.00
-    float dist_sn = 0.25;    // 0.00
-    float dist_g  = 0;    // 0.00
-    float dist_d  = 0.25;    // 0.00
-    
+void run_experiment(
+    float dist_so,
+    float dist_sn,
+    float dist_g,
+    float dist_d)
+{
     // generate set of requests data
     auto requests_data = generate_requests_data(
-        (int) (dist_so * count_client_requests),
-        (int) (dist_sn * count_client_requests),
-        (int) (dist_g * count_client_requests),
-        (int) (dist_d * count_client_requests));
+        (int) (dist_so * count_client_requests * scale),
+        (int) (dist_sn * count_client_requests * scale),
+        (int) (dist_g  * count_client_requests * scale),
+        (int) (dist_d  * count_client_requests * scale));
     
     // start client
     client_address(ADDRESS);
     client_start();
     
     // create new Cache instance, the single one for this experiment
-    Cache* cache = new Cache(max_memory);
+    Cache* cache = new Cache(max_memory + 1);
     
     // start timer
     auto start = std::chrono::steady_clock::now();
@@ -111,8 +116,9 @@ void experiment1() {
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> duration = end - start;
     
+    
     // report measurements
-    auto average_latency_us = duration.count()/count_client_requests;
+    auto average_latency_us = duration.count()/(count_client_requests * scale);
     std::cout << "average latency per request/response: " << average_latency_us << " us\n";
     
     
@@ -121,5 +127,11 @@ void experiment1() {
     
     // stop client
     client_stop();
-    
 }
+
+void experiment1() { run_experiment(
+    0.50, // set old    
+    0.25, // set new
+    0.00, // get
+    0.25  // del
+); }

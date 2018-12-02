@@ -1,23 +1,7 @@
 # Homework 5: Benchmarking the Cache
 
 _Partners_: Henry Blanchette and Henry Blanchette
-<!-- _Date_: TODO -->
-
-## 0. TODO
-
-Things to do:
-- figure out how to measure the _throughput_ statistic, as eitan requieres. This is kind of a problem because the way I have my Cache implementation set up, a Cache method both sends the request and waits for a response. Do I want to take the sending into account? I think is probably the best way to do it. Then I think what I can do is just measure how fast it does it all at _max speed_ i.e. without any programmatic delays. The thing this doesn't let me configure is the request rate, but it will be a resulting statistic. it'll be something like
-
-	request_rate(request_distribution, eviction rate)
-
-where, of course I have
-
-	eviction_rate(request_distribution)
-
-so I guess its really just
-
-	request_rate(request_distribution)
-
+_Date_: December 1st, 2018
 
 ## 1. Goals and Definitions
 
@@ -205,7 +189,18 @@ Each experiment is executed via the following steps:
 
 ## 9. Analysis
 
-<!-- can i work this out to not be a problem? -->
-The request rate may not be exact since it takes a little bit of time to actually send the request on the client-side, which is not accounted for in the timing.
+I noticed that there were times when I needed to rerun an experiment because the numbers were wildly and obviously innacurate. I think that there were times when a specific request was caught up on the network for some reason, probably having to do with other activity on my wifi network.
+
+I tried to make sure that all activity on the wifi-netowork I was using as an intermediary between my computers was relatively unfilled with other activity than the experiment, but I could not manage this perfectly as I share the network with other people. I did all the experiments in the same 30 minute window of time, so if there is a bias in the reported latencies, I think it is likely systematic rather than random.
+
+I made sure to run my experiments with the DEBUG modes off for both the server and the client.
+
+I noticed that almost all of the throughput values are all negligably less than just `1.00`. This implies that all of the workloads were manageable, continuously throughout the workload, under 1 ms per action. I suspected that the _WAAL versus Percent of Workload_ curve would be something like a square root curve, and that the threshold of 1 ms would be reached after some amount of the workload. Looking at the `WAAL history` data a little, it seems like I am right about this. Also, scaling up the Cache basically scaled the curve upwards (on the _WAAL_ axis). It seems, though that the workloads that I tested never pushed any part of the curve higher than the 1 ms threshold. A good test to do next would be to iterate through a couple higher `Scale` values to see where the curve finally starts hitting that threshold.
+
 
 ## 10. Results
+
+Of all the Cache actions I tested (Set Old, Set New, Get, Delete), the data shows that Set New takes the most amount of time as reflected by AAL. It also scaled the most directly with `scale`. Delete also takes a similar amount of time, but it is hard to test them independently because I tested workloads without any previous entries in the Cache (other than "old"), and there needs to be at least one Set New for each Delete action. I also wonder if the fact that Set Old and Get only access the same key ("old") is taking advantage of some implicit cache that makes those actions slightly faster.
+
+All of the workloads that I tested were essencially completely within the threshold for Sustained Throughput. In the future I should test to find the bounds where the workloads finally push my Cache beyond the 1 ms threshold per action.
+

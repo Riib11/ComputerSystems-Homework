@@ -23,11 +23,11 @@ using namespace Pistache;
 #include <json.h>
 using json = nlohmann::json;
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 
 shared_ptr<Http::Endpoint> server;
 
-Cache * cache;
+Cache* cache;
 
 struct PrintException {
 
@@ -170,12 +170,24 @@ class Handler : public Http::Handler {
                 // get key->value from cache
                 data["key"] = key;
                 
+                //if (DEBUG) { cout << "getting key: " << key << "\n"; }
+                
                 // cast to string
                 const void* val = cache->get(key, val_size);
-                const std::string *val_string_ptr = static_cast<const std::string*>(val);
-                std::string val_string = *val_string_ptr;
-                delete val_string_ptr;
-                data["value"] = val_string;
+                
+                //if (DEBUG) { cout << "value pointer:  " << val<< "\n"; }
+                
+                // TODO: remove this
+                data["value"] = "a";
+                data["val_size"] = 1;
+                
+                // TODO: fix this
+                //const std::string *val_string_ptr = static_cast<const std::string*>(val);
+                //std::string val_string = *val_string_ptr;
+                //delete val_string_ptr;
+                //data["value"] = val_string;
+                
+                //if (DEBUG) { cout << "got value: " << val_string << "\n"; }
                 
                 data["success"] = "true";
             }

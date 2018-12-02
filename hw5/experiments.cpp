@@ -8,10 +8,12 @@
 #include <unistd.h>
 #include <algorithm>
 
-const std::string ADDRESS = "192.168.84.21:9086";
+const std::string ADDRESS = "192.168.84.21:9082";
 
-const int scale = 1;
-const Cache::index_type max_memory = (512 * scale) + 1;
+//const int scale = 1;
+//const int scale = 8;
+const int scale = 16;
+const Cache::index_type max_memory = (512 * scale * 2);
 const int key_size = 4; // number of characters in key
 const int val_size = 1; // size (bytes) of value
 const int count_client_requests = (1024 * scale) + 1;
@@ -45,14 +47,14 @@ std::vector<std::pair<Action, Cache::key_type>> generate_requests_data(
 {
     std::vector<std::pair<Action, Cache::key_type>> actions;
     
-    // always make sure there's at least one reference "old" (which is set first)
-    // note that |"old"| = 3 so it fits `key_size`
-    actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Set, "old"));
+    // always make sure there's at least one reference "old_" (which is set first)
+    // note that |"old_"| = 3 so it fits `key_size`
+    actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Set, "old_"));
     
     // set old
     for (int i = 0; i < count_so; i++) {
-        // "old" is the key that all "set old" actions target
-        actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Set, "old"));
+        // "old_" is the key that all "set old" actions target
+        actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Set, "old_"));
     }
     // set new
     for (int i = 0; i < count_sn; i++) {
@@ -61,8 +63,8 @@ std::vector<std::pair<Action, Cache::key_type>> generate_requests_data(
     }
     // get
     for (int i = 0; i < count_g; i++) {
-        // always gets "old", which is guaranteed to be set
-        actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Get, "old"));
+        // always gets "old_", which is guaranteed to be set
+        actions.push_back(std::make_pair<Action, Cache::key_type>(Action::Get, "old_"));
     }
     // delete
     for (int i = 0; i < count_d; i++) {
@@ -174,8 +176,8 @@ void experiment2() { run_experiment(
 
 
 void experiment3() { run_experiment(
-    0.25, // set old    
-    0.25, // set new
+    0.00, // set old    
+    0.50, // set new
     0.50, // get
     0.00  // del
 ); }

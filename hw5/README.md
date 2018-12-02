@@ -171,9 +171,9 @@ Each experiment is executed via the following steps:
 
 | Scale | AAL | ST |
 |-------|-----|----|
-| 1     | 
-| 8     | 
-| 16    | 
+| 1     | 0.000260605 s | 0.995122 |
+| 8     | 0.00028499 s | 0.999634 |
+| 16    | 0.000420611 s | 0.999695 |
 
 ### Experiment 4: Set New and Delete
 
@@ -185,9 +185,9 @@ Each experiment is executed via the following steps:
 
 | Scale | AAL | ST |
 |-------|-----|----|
-| 1     | 
-| 8     | 
-| 16    | 
+| 1     | 0.000215811 s | 0.995122 |
+| 8     | 0.000256885 s | 0.999634 |
+| 16    | 0.000395336 s | 0.999695 |
 
 ### Experiment 5: Set New, Get, and Delete
 
@@ -199,9 +199,9 @@ Each experiment is executed via the following steps:
 
 | Scale | AAL | ST |
 |-------|-----|----|
-| 1     | 
-| 8     | 
-| 16    | 
+| 1     | 0.000201646 s | 0.995122 |
+| 8     | 0.000536334 s | 0.999634 |
+| 16    | 0.000529358 s | 0.999695 |
 
 ## 9. Analysis
 

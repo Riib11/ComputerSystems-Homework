@@ -19,6 +19,7 @@
       <itemPath>cache.cpp</itemPath>
       <itemPath>client.cpp</itemPath>
       <itemPath>experiments.cpp</itemPath>
+      <itemPath>experiments_threaded.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -64,6 +65,8 @@
       </item>
       <item path="experiments.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="experiments_threaded.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="json.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
@@ -100,6 +103,8 @@
       <item path="experiments.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="experiments.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="experiments_threaded.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="json.h" ex="false" tool="3" flavor2="0">
       </item>

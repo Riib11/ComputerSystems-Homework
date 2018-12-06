@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/cache.o \
 	${OBJECTDIR}/client.o \
 	${OBJECTDIR}/experiments.o \
+	${OBJECTDIR}/experiments_threaded.o \
 	${OBJECTDIR}/main.o
 
 
@@ -59,11 +60,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw5
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw6
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw5: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw6: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw5 ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw6 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/cache.o: cache.cpp
 	${MKDIR} -p ${OBJECTDIR}
@@ -79,6 +80,11 @@ ${OBJECTDIR}/experiments.o: experiments.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/experiments.o experiments.cpp
+
+${OBJECTDIR}/experiments_threaded.o: experiments_threaded.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/experiments_threaded.o experiments_threaded.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}

@@ -35,9 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/cache.o \
-	${OBJECTDIR}/client.o \
-	${OBJECTDIR}/experiments.o \
 	${OBJECTDIR}/experiments_threaded.o \
 	${OBJECTDIR}/main.o
 
@@ -65,21 +62,6 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw6: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw6 ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/cache.o: cache.cpp
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cache.o cache.cpp
-
-${OBJECTDIR}/client.o: client.cpp
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/client.o client.cpp
-
-${OBJECTDIR}/experiments.o: experiments.cpp
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/experiments.o experiments.cpp
 
 ${OBJECTDIR}/experiments_threaded.o: experiments_threaded.cpp
 	${MKDIR} -p ${OBJECTDIR}

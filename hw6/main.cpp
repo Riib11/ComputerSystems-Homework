@@ -2,16 +2,14 @@
 #include <iostream>
 
 #include <cstdlib>
-#include "client.h"
 #include "cache.h"
-#include "experiments.h"
+#include "experiments_threaded.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
     
-    experiment5();
-    
+    run_experiment();
     
     /*
     client_address("192.168.84.23:9081");

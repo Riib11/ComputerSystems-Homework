@@ -1,5 +1,9 @@
 #include <unistd.h>
+#include <cstdlib>
 #include <assert.h>
+#include <stdio.h>
+#include <chrono>
+#include <thread>
 
 #include <atomic>
 
@@ -15,7 +19,7 @@ using namespace Pistache::Http;
 #include "json.h"
 using json = nlohmann::json;
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 
 Http::Client client;
 std::string address = "192.168.84.21:9080"; // TODO: check this works
@@ -32,10 +36,13 @@ void client_stop() {
     client.shutdown();
 }
 
-const Cache::index_type max_memory = (1024);
+const Cache::index_type maxmem = 1024;
 const int key_size = 8;
 const int val_size = 16;
 const int requests_count = 1024;
+
+const float request_rate = 20; // requests/second
+
 
 // converts an int to a string and pads it,
 // ensuring it is at least `length` in length
@@ -53,14 +60,14 @@ void run_experiment() {
     //
     const float ratio_set      = 0.3f;
     const float ratio_get_hit  = 0.7f * 0.9f;
-    const float ratio_get_miss = 0.7f * 0.1f
-    
-    assert (ratio_set > ratio_get_hit);
-    assert (ratio_set + ratio_get_hit + ratio_get_miss == 1.0f);
+    const float ratio_get_miss = 0.7f * 0.1f;
     
     const int index_set      = 0;
     const int index_get_hit  = index_set + ((int) (ratio_set * requests_count));
     const int index_get_miss = index_get_hit + ((int) (ratio_get_hit * requests_count));
+    
+    const std::chrono::duration<float> request_delay = std::chrono::milliseconds((int) (1000 / request_rate));
+    if (DEBUG) { std::cout << "request_delay = " << request_delay.count() << "\n"; }
     
     std::vector<std::string> commands;
     std::vector<std::string> arguments;
@@ -98,8 +105,7 @@ void run_experiment() {
     client_start();
     
     // start server Cache
-    Cache* cache = new Cache(max_memory);
-    
+    client.post(address + "/key/" + std::to_string(maxmem)).send();
     // track responses
     Http::Cookie cookie = Http::Cookie("Tracker", "tracking tracker");
     std::vector<Async::Promise<Http::Response>> responses;
@@ -126,6 +132,9 @@ void run_experiment() {
             auto response = client.put(resource).cookie(cookie).send();
             responses.push_back(std::move(response));
         }
+        
+        // delay, to throttle request rate
+        std::this_thread::sleep_for(request_delay);
     }
     
     // wait for responses
@@ -139,7 +148,8 @@ void run_experiment() {
     
     // stop client
     client_stop();
-
+    // NOTE: don't need to stop server Cache
+    
     // calculate results
     auto average_latency = duration.count() / requests_count;
     

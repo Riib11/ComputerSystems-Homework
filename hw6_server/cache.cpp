@@ -10,6 +10,8 @@
 
 using evictor_obj_type = FIFO;
 
+const bool DEBUG = false;
+
 /*
  * CACHE :: IMPLEMENTATION
  */
@@ -103,6 +105,9 @@ public:
     
     void
     set(key_type key, val_type val, index_type size) {
+        
+        if (DEBUG) { std::cout << "trying to set value"; }
+        
         // no amount of eviction will work...
         if (size > maxmem_ && !USING_RESIZING_) {
             throw "size too big for cache :/";

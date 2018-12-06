@@ -222,14 +222,15 @@ class Handler : public Http::Handler {
             if (length >= 3 && reslist[1] == "key") {
                 // interpret input
                 Cache::key_type key = reslist[2];
-                // create new cache entry
-                                
+                if (DEBUG) { cout << "putting new key: " << key << "\n"; }
+                
                 // cast string to void*
                 std::string val_string = reslist[3];
                 std::string* val_string_ptr = &val_string;
-                // DEBUG: log cast process: void* -> string
-                // cout << "val_string = " << val_string << std::endl;
-                // cout << "val_string_ptr = " << val_string_ptr << std::endl;
+//                if (DEBUG) {
+//                    cout << "val_string = " << val_string << std::endl;
+//                    cout << "val_string_ptr = " << val_string_ptr << std::endl;
+//                }
                 Cache::val_type val = val_string_ptr;
                 Cache::index_type size = reslist[3].size(); // size(char) = 1
                 
@@ -268,8 +269,7 @@ class Handler : public Http::Handler {
                 Cache::index_type maxmem = parse_index_type(maxmem_ch_ptr);
                 cache = new Cache(maxmem);
                 data["success"] = "true";
-                // DEBUG: log creation of new cache
-                // cout << "created new cache with maxmem = " << maxmem << endl;
+                if (DEBUG) { cout << "created new cache with maxmem = " << maxmem << endl; }
             }
             // shutdown
             else if (length >= 1 && reslist[1] == "shutdown") {

@@ -13,7 +13,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
     // default arguments
-    Cache::index_type maxmem = 100;
+    Cache::index_type maxmem = 1024;
     int portnum = 9082;
     
     // process command line arguments

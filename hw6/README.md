@@ -5,24 +5,28 @@ _Date_: December TODOst, 2018
 
 ## Introduction
 
-Using the same factors and metrics from hw5.
+For the experiments in this homework, I've changed the way that latency and throughput are measured. I basically had to scrap the client-side implementation of Cache because it didn't handle sending and timing parallel batches of requests. So, I've implemented just enough functionality for this homework's experiments in `experiments_threaded.cpp`.
+
+To throttle the `request_rate`, there is a delay between the sending of asynchronous requests from the client to the server. Then the total delay time is subtracted from the calculated total latency (which is then averaged over the requests).
+
+For all the experiments, the batch load is
+- 70% `GET` (of which 90% hit, 10% miss)
+- 30% `SET`
+- `key_size` = 8 bytes
+- `value_size` = 16 bytes
+
+
 
 ## Previous Performance
 
-<!-- TODO: parameters:
-    70% gets (90% hit rate)
-    30% sets
-    key size: 8 bytes
-    value size: 16 bytes
--->
+This is the same implementation that I had before in hw5, except without the Cache class abstraction.
 
-<!-- TODO:
-    redefine througput threshold for threads,
-    and have single thread for this test
--->
+<!-- TODO: how much time is spent on each operation -->
+<!-- TODO: measurements -->
 
 ## Optimized Performance
 
 Added threads.
 
-<!-- TODO: new test -->
+<!-- TODO: how much time is spent on each operation -->
+<!-- TODO: measurements -->

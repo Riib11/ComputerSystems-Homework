@@ -33,6 +33,7 @@ right after `#include <inttypes.h>` in `converter.h`. This is a legal move becau
 
 For all of the following, make sure you `cd lazy/`.
 
+*IMPORTANT NOTE*: I addd a line to `converter.h`. I did not, however, _change_ any lines. The purpose and justification for this are discussed at the end of the previous section.
 
 I editted the compilation process to work for C++ rather than just C, which was excplicitly allowed. To compile:
 

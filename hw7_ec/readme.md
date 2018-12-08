@@ -25,7 +25,7 @@ To `#undef` right, `lazy_atoi.h` needs to be included _after_ `<inttypes.h>` (wh
 right after `#include <inttypes.h>` in `converter.h`. This is a legal move because
 - the interface is not **broken**
 - nothing in the interface was **deleted** or **changed**, it is compelely reasonable to include another important file to keep the code organized
-- relying on the order of including file order is a common and relevant concern in general coding, so it's not a problem to rely on it here
+- relying on the order of including file order is a common and relevant concern in general coding, so it's not unreasonable to rely on it here
 
 
 

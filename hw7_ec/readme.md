@@ -35,8 +35,10 @@ For example:
 
 ## Results
 
-For running the given example `quotes.txt`:
+For running on the example data in `quotes.txt`:
 
 | platform | time |
 |---|---|
-| casually on my mac | 
+| casually on my mac | 0.002791s |
+
+:)

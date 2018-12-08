@@ -2,7 +2,7 @@
  * API for converter function--do not change this file!
  */
 #include <inttypes.h>
-#include "lazy.h"
+#include "lazy_atoi.h" // necessary to load new #define for uint32_t
 
 typedef uint32_t quote_t;
 

@@ -1,6 +1,6 @@
 # Micro Optimization: Extra Credit
 
-_By:_ Henry Blanchette
+_by Henry Blanchette_
 
 ## Setup
 
@@ -15,6 +15,19 @@ We are scored by how fast `driver.c` measures our code to be, given an arbitrary
 My solution is implemented in `lazy/`. The _trick_ I take advantage of is how our code is assumed to work. I think that the obvious solution is to optimize the loop from `0` to `nlines` that quickly `atoi`'s stock quote lines into the `quote_t[]`. But, of course, the most intensive process has little to do with the looping mechanic. `atoi` is slow as a snail. This is the best place to optimize.
 
 The truth is that we really _don't_ need to `atoi` during the loop. Why would we? We just need to go through all the numbers to make sure we get them all, and thats the important thing. The `atoi` bit is only important when we get to the checking to make sure that we got the right numbers. Getting the right numbers doesn't have to be checked during the loop. So, the best optimization I could think of was to delay the `atoi` process using a lazy-evalution wrapper `struct atoi_lazy` that acts like an `atoi`ed quote as `uint32_t` (the expected numeric value for the `checksum` to calculate with) but actually hasn't been `atoi`ed yet. The lazy evaluation is processed when it comes to `checksum` when we actually do need the exact value. So, `atoi` ends up running  during `checksum` rather than in `convert_all`, which drastically reduces the time spent in `convert_all`.
+
+To make this work, I need `driver.cpp` and `converter.h` to recognize my lazy wrapper for atoi. But since I'm not allowed to change anything in `converter.h` or `driver.cpp`, I can't just replace the references to `uint32_t` to the lazy wrapper. Or can I? I decided to use the cool C++ feature `#undef ... #define` that allows the undefinition and then redefinition of virtually anything in the language, including `uint32_t`. So, I created a new header `lazy_atoi.h` which both defined the wrapper and makes sure `uint32_t` are corrected using `#undef ... #define`. 
+
+To `#undef` right, `lazy_atoi.h` needs to be included _after_ `<inttypes.h>` (where `uint32_t` is originally defined). So, I *added*
+
+    #include "lazy_atoi.h"
+
+right after `#include <inttypes.h>` in `converter.h`. This is a legal move because
+- the interface is not *broken*
+- nothing in the interface was *deleted* or *changed*, it is compelely reasonable to include another important file to keep the code organized
+- relying on the order of including file order is a common and relevant concern in general coding, so it's not a problem to rely on it here
+
+
 
 ## Compilation
 

@@ -23,12 +23,12 @@ using json = nlohmann::json;
 const bool DEBUG = true;
 
 Http::Client client;
-std::string address = "134.10.125.72:9080"; // TODO: check this works
+std::string address = "192.168.84.21:9080"; // TODO: check this works
 
 void client_start() {
     // Http client options
     auto opts = Http::Client::options()
-            .threads(8)
+            .threads(1)
             .maxConnectionsPerHost(1);
     client.init(opts);
 }

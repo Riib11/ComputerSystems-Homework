@@ -28,7 +28,7 @@ A trick that was discussed in class near the end of the year was that setting a 
     ...
     *nums++ = atoi(lines[i+n]);
 
-This effect seemed to approach a max somewhere between `n = 500` and `n = 1000`, with a time of about 0.078 seconds. This was definitely doing better, but still not even as good as a "naive" implementation.
+This effect seemed to approach a max somewhere between `n = 500` and `n = 1000`, with a time of about 0.078 seconds (an example of this can be found in `tmp/converter_long.c`). This was definitely doing better, but still not even as good as a "naive" implementation.
 
 I played around with using some of the `perf`-like tools that were discussed in class, and noted consistently that the most time-consuming operation by far was `atoi`. This was an annoying conclusion, because to optimize `atoi` would involve writing some sort of custom `std::string` to `uint32_t` parser. I would guess that the process of writing such a parser would be longer that I'm able to spend time on an extra credit assignment, assuming that I could even get one to work faster than the original `atoi` in the first place. I opted not to go this route.
 

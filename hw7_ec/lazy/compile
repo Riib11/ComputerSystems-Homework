@@ -1,1 +1,0 @@
-g++ -O3 -std=c++17 -march=native -Werror -Wall -Wextra -pedantic driver.cpp converter.cpp -o driver

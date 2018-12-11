@@ -2,7 +2,7 @@
 
 _by Henry Blanchette_
 
-## Setup
+## Prompt
 
 The original code provided is in `micropt/`. `quotes.txt` contains an example list of stock quotes (about 2.5 million), and the goal is to convert this file into an array of `quote_t` as efficiently as possible. `driver.c` tests a solution provided in `converter.c`. We are instructed to keep our solution compatible with the `converter.h` interface. We are to keep in mind:
 
@@ -35,7 +35,7 @@ For all of the following, make sure you `cd lazy/`.
 
 **IMPORTANT NOTE**: I addd a line to `converter.h`. I did not, however, _change_ any lines. The purpose and justification for this are discussed at the end of the previous section.
 
-I editted the compilation process to work for C++ rather than just C, which was excplicitly allowed. To compile:
+I editted the compilation process to work for C++ rather than just C, which was excplicitly allowed (compiling C++ code with `-std=c99` is deprecated) To compile:
 
     ./compile
 

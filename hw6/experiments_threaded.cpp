@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <chrono>
 #include <thread>
+#include <mutex>
 
 #include <atomic>
 
@@ -22,7 +23,7 @@ using json = nlohmann::json;
 const bool DEBUG = true;
 
 Http::Client client;
-std::string address = "192.168.84.21:9082"; // TODO: check this works
+std::string address = "134.10.125.72:9080"; // TODO: check this works
 
 void client_start() {
     // Http client options
@@ -66,9 +67,10 @@ void run_experiment() {
     const int index_get_hit  = index_set + ((int) (ratio_set * requests_count));
     const int index_get_miss = index_get_hit + ((int) (ratio_get_hit * requests_count));
     
-    const std::chrono::duration<double> request_delay = std::chrono::nanoseconds((int) (1000000 / request_rate));
-//    std::chrono::milliseconds((int) (1000 / request_rate));
-    const std::chrono::duration<double> request_delay_total = std::chrono::nanoseconds((int) (requests_count * 1000000 / request_rate));
+    const std::chrono::duration<double> request_delay
+        = std::chrono::nanoseconds((int) (1000000 / request_rate));
+    const std::chrono::duration<double> request_delay_total
+        = std::chrono::nanoseconds((int) (requests_count * 1000000 / request_rate));
     std::cout << "request_delay = " << request_delay.count() << "\n";
     
     std::vector<std::string> commands;
@@ -139,6 +141,14 @@ void run_experiment() {
         // delay, to throttle request rate
         std::this_thread::sleep_for(request_delay);
     }
+
+    // example on response handler
+//    auto response = client.get(resource).cookie(cookie).send();
+//    response.then([&](Http::Response response) {
+//        response_code = response.code();
+//        response_body = response.body(); }, Async::IgnoreException);
+//    responses.push_back(std::move(response));
+    
     
     // wait for responses
     auto sync = Async::whenAll(responses.begin(), responses.end());
